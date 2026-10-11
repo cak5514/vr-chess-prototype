@@ -1,0 +1,20 @@
+:root {
+  font-family: system-ui, "Segoe UI", sans-serif;
+  color: #1f2430;
+  background: #f4f1ea;
+}
+
+body {
+  margin: 0;
+}
+
+.welcome {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.check {
+  color: #5a6072;
+}
