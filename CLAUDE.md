@@ -64,6 +64,33 @@ that implement interfaces defined in core and are passed in from `main.ts`.
   `core/progress`; the localStorage version is in `platform/`.
 - `main.ts` builds the Learn and Play screens once and only hides/shows them.
 
+- Move classifier (the project's own trained model): a small convolutional
+  network trained in `training/` (Python, PyTorch) on the Lichess puzzle
+  database. Given a position and a move it outputs ideas such as sacrifice,
+  fork, pin (`IdeaLabel`). The exported model is `public/model/`; the browser
+  runs it through `platform/onnxMoveClassifier.ts` behind the `MoveClassifier`
+  interface in `core/model`. `core/model/encodeMove.ts` must stay identical to
+  `training/encode.py`; a parity test checks this. Retrain with the three
+  commands in `training/README.md`.
+- The engine stays the judge of whether a move is good (blunders are detected
+  by evaluation drop). The model names the idea behind a move.
+
+## Product direction: three modes
+
+Agreed with the student on 2026-10-12. These replace the single hint button.
+
+- Commenter: silent before the move. After every move it rates the move and
+  justifies the rating. Built on `GameReviewer` plus the move classifier.
+- Coach: before the move, lists sound candidate moves grouped by category
+  (attack, defend, prepare attack, prepare defence, trap, sacrifice) without
+  saying which is best; the player picks. The Commenter also rates the pick.
+- Teacher: lessons on openings, gambits and traps, tactics, and basic
+  checkmates. Extends the tutorial; needs scripted opponent replies.
+- Plain play with no help stays available.
+
+Status: the classifier is trained and loads in the browser. The three modes
+are not built yet; build Commenter, then Coach, then Teacher.
+
 ## What the proposal requires
 
 The submitted proposal wins over any other instruction.

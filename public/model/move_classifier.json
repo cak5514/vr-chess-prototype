@@ -1,0 +1,130 @@
+{
+  "labels": [
+    "ordinary",
+    "sacrifice",
+    "fork",
+    "pin",
+    "skewer",
+    "discoveredAttack",
+    "doubleCheck",
+    "attraction",
+    "deflection",
+    "trappedPiece",
+    "hangingPiece",
+    "capturingDefender",
+    "defensiveMove",
+    "quietMove",
+    "mate"
+  ],
+  "thresholds": [
+    0.6,
+    0.95,
+    0.85,
+    0.9,
+    0.95,
+    0.95,
+    0.95,
+    0.95,
+    0.95,
+    0.95,
+    0.9,
+    0.95,
+    0.9,
+    0.95,
+    0.75
+  ],
+  "inputPlanes": 26,
+  "testMeanF1": 0.857,
+  "test": {
+    "ordinary": {
+      "precision": 0.946,
+      "recall": 0.937,
+      "f1": 0.941,
+      "examples": 78030
+    },
+    "sacrifice": {
+      "precision": 0.878,
+      "recall": 0.835,
+      "f1": 0.856,
+      "examples": 11643
+    },
+    "fork": {
+      "precision": 0.965,
+      "recall": 0.968,
+      "f1": 0.967,
+      "examples": 34858
+    },
+    "pin": {
+      "precision": 0.844,
+      "recall": 0.823,
+      "f1": 0.833,
+      "examples": 16200
+    },
+    "skewer": {
+      "precision": 0.931,
+      "recall": 0.916,
+      "f1": 0.923,
+      "examples": 5609
+    },
+    "discoveredAttack": {
+      "precision": 0.909,
+      "recall": 0.858,
+      "f1": 0.883,
+      "examples": 14980
+    },
+    "doubleCheck": {
+      "precision": 0.944,
+      "recall": 0.859,
+      "f1": 0.9,
+      "examples": 1522
+    },
+    "attraction": {
+      "precision": 0.865,
+      "recall": 0.883,
+      "f1": 0.874,
+      "examples": 3893
+    },
+    "deflection": {
+      "precision": 0.833,
+      "recall": 0.808,
+      "f1": 0.82,
+      "examples": 9882
+    },
+    "trappedPiece": {
+      "precision": 0.855,
+      "recall": 0.832,
+      "f1": 0.843,
+      "examples": 3374
+    },
+    "hangingPiece": {
+      "precision": 0.834,
+      "recall": 0.966,
+      "f1": 0.895,
+      "examples": 12052
+    },
+    "capturingDefender": {
+      "precision": 0.766,
+      "recall": 0.715,
+      "f1": 0.74,
+      "examples": 1841
+    },
+    "defensiveMove": {
+      "precision": 0.618,
+      "recall": 0.689,
+      "f1": 0.652,
+      "examples": 11065
+    },
+    "quietMove": {
+      "precision": 0.767,
+      "recall": 0.761,
+      "f1": 0.764,
+      "examples": 3986
+    },
+    "mate": {
+      "precision": 0.958,
+      "recall": 0.964,
+      "f1": 0.961,
+      "examples": 61843
+    }
+  }
+}

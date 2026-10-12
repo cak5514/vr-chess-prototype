@@ -12,7 +12,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "chess.js": "^1.4.0"
+    "chess.js": "^1.4.0",
+    "onnxruntime-web": "^1.30.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

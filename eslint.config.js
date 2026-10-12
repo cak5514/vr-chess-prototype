@@ -2,7 +2,8 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", "public"] },
+  // training/ is Python, and its environment contains other people's JavaScript.
+  { ignores: ["dist", "node_modules", "public", "training"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
 

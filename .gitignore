@@ -1,4 +1,10 @@
 node_modules/
+# Model training: the Python environment, downloaded data and work files
+# are large and can all be recreated, so they stay out of Git.
+training/.venv/
+training/data/
+training/runs/
+__pycache__/
 dist/
 *.local
 .vite/

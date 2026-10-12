@@ -1,0 +1,11 @@
+# Install PyTorch first, with the build that matches your graphics card.
+# For a recent NVIDIA card:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+# Without a graphics card (slower, but works):
+#   pip install torch
+chess
+numpy
+zstandard
+onnx
+onnxruntime
+onnxscript
