@@ -1,4 +1,4 @@
-import { LESSONS, LessonSession, MoveSelector } from "../../core/index";
+import { LESSON_GROUPS, LESSONS, LessonSession, MoveSelector } from "../../core/index";
 import type { Lesson, TutorialProgress } from "../../core/index";
 import { Board2D } from "../board/board2d/board2d";
 import { PIECE_GLYPHS } from "../board/pieceGlyphs";
@@ -29,11 +29,39 @@ export function createTutorialScreen(
     heading.textContent = "Learn chess step by step";
     const intro = document.createElement("p");
     intro.className = "lesson-list-intro";
-    intro.textContent = `Start with the board, then meet each piece. ${progress.completedCount()} of ${LESSONS.length} lessons complete.`;
+    intro.textContent = `Start with the basics, then learn tactics, checkmates and openings. ${progress.completedCount()} of ${LESSONS.length} lessons complete.`;
+    screen.append(heading, intro);
 
-    const grid = document.createElement("div");
-    grid.className = "lesson-grid";
-    LESSONS.forEach((lesson, index) => {
+    // One section per group of lessons, each with its own grid of cards.
+    for (const group of LESSON_GROUPS) {
+      const lessons = LESSONS.filter((lesson) => lesson.group === group.id);
+      if (lessons.length === 0) continue;
+
+      const section = document.createElement("section");
+      section.className = "lesson-section";
+      const title = document.createElement("h3");
+      title.textContent = group.title;
+      const description = document.createElement("p");
+      description.className = "lesson-section-description";
+      description.textContent = group.description;
+      const grid = document.createElement("div");
+      grid.className = "lesson-grid";
+      grid.append(...lessons.map(lessonCard));
+      section.append(title, description, grid);
+      screen.append(section);
+    }
+
+    if (progress.allComplete()) {
+      const finished = document.createElement("div");
+      finished.className = "lesson-finished";
+      const text = document.createElement("p");
+      text.textContent = "You have finished every lesson. Time to try a real game!";
+      finished.append(text, button("Play a game", "primary", actions.onPlay));
+      screen.append(finished);
+    }
+    container.replaceChildren(screen);
+
+    function lessonCard(lesson: Lesson): HTMLElement {
       const done = progress.isComplete(lesson.id);
       const card = document.createElement("button");
       card.type = "button";
@@ -51,7 +79,7 @@ export function createTutorialScreen(
       }
 
       const title = document.createElement("strong");
-      title.textContent = `${index + 1}. ${lesson.title}`;
+      title.textContent = lesson.title;
       const summary = document.createElement("span");
       summary.className = "lesson-summary";
       summary.textContent = lesson.summary;
@@ -61,19 +89,8 @@ export function createTutorialScreen(
 
       card.append(icon, title, summary, state);
       card.addEventListener("click", () => openLesson(lesson));
-      grid.append(card);
-    });
-
-    screen.append(heading, intro, grid);
-    if (progress.allComplete()) {
-      const finished = document.createElement("div");
-      finished.className = "lesson-finished";
-      const text = document.createElement("p");
-      text.textContent = "You have finished every lesson. Time to try a real game!";
-      finished.append(text, button("Play a game", "primary", actions.onPlay));
-      screen.append(finished);
+      return card;
     }
-    container.replaceChildren(screen);
   }
 
   function openLesson(lesson: Lesson): void {
@@ -117,14 +134,15 @@ export function createTutorialScreen(
 
       board.render({
         position: session.board.getPosition(),
-        orientation: "white",
+        // Lessons where the learner plays Black show the board from Black's side.
+        orientation: lesson.orientation ?? "white",
         selected: selection.selected,
         targets: selection.targets,
         arrows: [],
         marks: view.marks.map((square) => ({ square, kind: "control" })),
         warningSquares: [],
       });
-      promotion.update(selection.pendingPromotion ? "white" : null);
+      promotion.update(selection.pendingPromotion ? session.board.learnerColor() : null);
 
       if (view.complete) {
         progress.markComplete(lesson.id);

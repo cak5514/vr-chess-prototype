@@ -42,7 +42,10 @@ export function isGoalMet(goal: MoveGoal, position: Position, lastMove: MoveReco
     case "capture-all":
       return !Object.values(position.pieces).some((piece) => piece.color === "black" && piece.type !== "king");
     case "play":
-      return lastMove?.from === goal.from && lastMove.to === goal.to;
+      return [goal, ...(goal.or ?? [])].some((move) => lastMove?.from === move.from && lastMove.to === move.to);
+    case "checkmate":
+      // Chess notation ends a move with "#" when it is checkmate.
+      return lastMove?.san.endsWith("#") ?? false;
     case "promote":
       return lastMove?.promotion !== undefined;
     case "any":
@@ -151,7 +154,7 @@ export class LessonSession {
     this.feedback = feedback;
     // There is nothing to solve in an "info" step, so it starts solved.
     this.solved = this.step.kind === "info";
-    this.board.load(this.step.fen);
+    this.board.load(this.step.fen, this.step.shownMove);
     // Pieces may only be moved during a "move" step.
     this.board.locked = this.step.kind !== "move";
     this.emit();

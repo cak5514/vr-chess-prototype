@@ -106,7 +106,21 @@ rule, make sure the right purpose is set before `add()`.
 The Play screen's Help setting is Commenter (default), Coach, or none. The
 old hint button and danger warnings are gone from the screen; `findHint` and
 `findThreatenedPieces` remain in core because Coach and Commenter use the
-rules behind them. Still to build: Teacher.
+rules behind them.
+
+Teacher is built as an extension of the tutorial (the Learn tab). Lessons
+now have a `group` (basics, tactics, checkmates, openings, gambits); the
+strategy lessons are in `core/tutorial/strategyLessons.ts`. Opening and gambit
+lessons are written as a line of moves in chess notation, and
+`lineBuilder.ts` turns a line into steps and works out every position. It
+throws if a move is illegal or its notation is wrong (a missing "+" or "#"),
+so a bad line fails the tests. `strategyLessons.test.ts` checks each lesson's
+chess claims against the rules (the fork really attacks both pieces, the mate
+really is mate). `ExerciseBoard` lets the learner play whichever side is to
+move, so lessons can be played as Black (`orientation: "black"`).
+
+All three modes now exist. Next in the original plan: the 3D board, deploy,
+then VR.
 
 ## What the proposal requires
 

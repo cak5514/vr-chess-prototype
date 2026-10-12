@@ -35,8 +35,8 @@ export type { IdeaLabel, IdeaScore, ModelInfo, MoveClassifier, MoveIdeas } from 
 export { ComputerOpponent } from "./opponent/computerOpponent";
 export { TutorialProgress } from "./progress/progress";
 export type { KeyValueStore } from "./progress/progress";
-export { getLesson, LESSONS } from "./tutorial/lessons";
-export type { Lesson, LessonId, LessonStep } from "./tutorial/lessons";
+export { getLesson, LESSON_GROUPS, LESSONS } from "./tutorial/lessons";
+export type { Lesson, LessonGroup, LessonId, LessonStep } from "./tutorial/lessons";
 export { LessonSession } from "./tutorial/lessonSession";
 export type { Feedback, LessonView } from "./tutorial/lessonSession";
 export { isSquare } from "./types";

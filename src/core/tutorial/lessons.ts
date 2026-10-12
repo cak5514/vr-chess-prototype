@@ -1,64 +1,20 @@
-import type { PieceType, Square } from "../types";
+import type { Lesson, LessonId } from "./lessonTypes";
+import { STRATEGY_LESSONS } from "./strategyLessons";
 
-// The tutorial's content. Each lesson is a list of small steps:
-// - "info": read an explanation and look at the board
-// - "pick": click the right square
-// - "move": make a move (or two) that reaches a goal
-//
-// Positions are written as FEN, the standard one-line notation for a chess
-// position. Capital letters are white pieces, small letters are black, and
-// numbers are runs of empty squares. In every exercise the learner plays white.
+// The basic lessons: the board and how each piece moves. The types are in
+// lessonTypes.ts, and the strategy lessons are in strategyLessons.ts.
 
-export type LessonId = "board" | "rook" | "bishop" | "queen" | "knight" | "king" | "pawn";
-
-/** What the learner has to achieve in a "move" step. */
-export type MoveGoal =
-  /** Get a white piece onto `square`. */
-  | { type: "reach"; square: Square; maxMoves?: number }
-  /** Capture every black piece (kings do not count). */
-  | { type: "capture-all"; maxMoves?: number }
-  /** Play exactly this move. */
-  | { type: "play"; from: Square; to: Square }
-  /** Promote a pawn. */
-  | { type: "promote" }
-  /** Any legal move will do. */
-  | { type: "any" };
-
-interface StepBase {
-  text: string;
-  fen: string;
-  /** Squares to highlight. */
-  marks?: Square[];
-  /** Highlight every square the piece on this square can move to. */
-  showMovesOf?: Square;
-}
-
-export interface InfoStep extends StepBase {
-  kind: "info";
-}
-
-export interface PickStep extends StepBase {
-  kind: "pick";
-  answer: Square;
-  success: string;
-}
-
-export interface MoveStep extends StepBase {
-  kind: "move";
-  goal: MoveGoal;
-  success: string;
-}
-
-export type LessonStep = InfoStep | PickStep | MoveStep;
-
-export interface Lesson {
-  id: LessonId;
-  title: string;
-  summary: string;
-  /** The piece this lesson is about, used for its icon. The board lesson has none. */
-  piece?: PieceType;
-  steps: LessonStep[];
-}
+export { LESSON_GROUPS } from "./lessonTypes";
+export type {
+  InfoStep,
+  Lesson,
+  LessonGroup,
+  LessonId,
+  LessonStep,
+  MoveGoal,
+  MoveStep,
+  PickStep,
+} from "./lessonTypes";
 
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const EMPTY = "8/8/8/8/8/8/8/8 w - - 0 1";
@@ -70,7 +26,7 @@ function board(placement: string): string {
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
-export const LESSONS: Lesson[] = [
+const BASIC_LESSONS: Omit<Lesson, "group">[] = [
   {
     id: "board",
     title: "The board",
@@ -387,6 +343,12 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+];
+
+/** Every lesson, in the order they are shown: the basics first, then strategy. */
+export const LESSONS: Lesson[] = [
+  ...BASIC_LESSONS.map((lesson): Lesson => ({ ...lesson, group: "basics" })),
+  ...STRATEGY_LESSONS,
 ];
 
 export function getLesson(id: LessonId): Lesson | undefined {

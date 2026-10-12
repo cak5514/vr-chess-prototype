@@ -8,6 +8,7 @@ const ROOK = "8/8/8/8/3R4/8/8/8 w - - 0 1";
 /** A tiny lesson with one step of each kind, so the tests do not depend on real content. */
 const SAMPLE: Lesson = {
   id: "rook",
+  group: "basics",
   title: "Sample",
   summary: "For tests",
   steps: [

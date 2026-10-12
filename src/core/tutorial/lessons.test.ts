@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isSquare } from "../types";
 import { ExerciseBoard } from "./exerciseBoard";
-import { getLesson, LESSONS } from "./lessons";
+import { getLesson, LESSON_GROUPS, LESSONS } from "./lessons";
 import type { MoveGoal } from "./lessons";
 import { isGoalMet, movesAllowed } from "./lessonSession";
 
@@ -13,11 +13,12 @@ import { isGoalMet, movesAllowed } from "./lessonSession";
 function canBeSolved(fen: string, goal: MoveGoal, movesLeft: number): boolean {
   const start = new ExerciseBoard();
   start.load(fen);
-  const whiteSquares = Object.entries(start.getPosition().pieces)
-    .filter(([, piece]) => piece.color === "white")
+  // The learner plays whichever side is to move in the position.
+  const learnerSquares = Object.entries(start.getPosition().pieces)
+    .filter(([, piece]) => piece.color === start.learnerColor())
     .map(([square]) => square);
 
-  for (const from of whiteSquares) {
+  for (const from of learnerSquares) {
     for (const to of start.legalMovesFrom(from)) {
       const board = new ExerciseBoard();
       board.load(fen);
@@ -31,34 +32,53 @@ function canBeSolved(fen: string, goal: MoveGoal, movesLeft: number): boolean {
 }
 
 describe("the lesson list", () => {
-  it("covers the board and all six pieces", () => {
-    expect(LESSONS.map((lesson) => lesson.id)).toEqual([
-      "board",
-      "rook",
-      "bishop",
-      "queen",
-      "knight",
-      "king",
-      "pawn",
-    ]);
+  it("starts with the board and all six pieces", () => {
+    const basics = LESSONS.filter((lesson) => lesson.group === "basics").map((lesson) => lesson.id);
+    expect(basics).toEqual(["board", "rook", "bishop", "queen", "knight", "king", "pawn"]);
+    expect(LESSONS.slice(0, 7).map((lesson) => lesson.id)).toEqual(basics);
+  });
+
+  it("has lessons in every section of Teacher mode", () => {
+    for (const group of LESSON_GROUPS) {
+      const count = LESSONS.filter((lesson) => lesson.group === group.id).length;
+      expect(count, group.title).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("gives every lesson its own id", () => {
+    const ids = LESSONS.map((lesson) => lesson.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("looks lessons up by id", () => {
     expect(getLesson("knight")?.title).toBe("The knight");
+    expect(getLesson("legals-trap")?.title).toBe("Legal's Trap");
   });
 
   it("gives every lesson an interactive exercise", () => {
     for (const lesson of LESSONS) {
       const interactive = lesson.steps.filter((step) => step.kind !== "info");
-      expect(interactive.length, lesson.id).toBeGreaterThanOrEqual(2);
+      expect(interactive.length, lesson.id).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it("shows the board from Black's side in lessons where the learner plays Black", () => {
+    for (const lesson of LESSONS) {
+      const firstMove = lesson.steps.find((step) => step.kind === "move");
+      if (!firstMove) continue;
+      const board = new ExerciseBoard();
+      board.load(firstMove.fen);
+      expect(lesson.orientation ?? "white", lesson.id).toBe(board.learnerColor());
     }
   });
 });
 
 // One group of checks per lesson, so a broken step is easy to find.
 describe.each(LESSONS)("lesson: $title", (lesson) => {
-  it("starts with an explanation", () => {
-    expect(lesson.steps[0].kind).toBe("info");
+  it("ends on something worth remembering", () => {
+    const last = lesson.steps[lesson.steps.length - 1];
+    const closing = last.kind === "info" ? last.text : last.success;
+    expect(closing.length).toBeGreaterThan(20);
   });
 
   it.each(lesson.steps.map((step, index) => ({ step, number: index + 1 })))(

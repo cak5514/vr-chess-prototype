@@ -89,11 +89,26 @@ p {
   color: var(--ink-soft);
 }
 
+.lesson-section {
+  margin-top: 1.6rem;
+}
+
+.lesson-section h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.lesson-section-description {
+  margin-top: 0.15rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
 .lesson-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
   gap: 0.9rem;
-  margin-top: 1.2rem;
+  margin-top: 0.7rem;
 }
 
 .lesson-card {
