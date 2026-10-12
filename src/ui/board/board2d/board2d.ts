@@ -30,7 +30,8 @@ export class Board2D implements BoardView {
     this.root = document.createElement("div");
     this.root.className = "board";
     this.root.addEventListener("pointerdown", this.onPointerDown);
-    container.append(this.root);
+    // First in the container, so pop-ups added later sit on top of the board.
+    container.prepend(this.root);
   }
 
   render(state: BoardViewState): void {

@@ -342,6 +342,21 @@ p {
   container-type: inline-size;
 }
 
+/* The 3D board: a square canvas the same size as the flat board. */
+.board3d {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #e9e2d3 0%, #cfc5b1 100%);
+  /* Lets a finger turn the board instead of scrolling the page. */
+  touch-action: none;
+  cursor: grab;
+}
+
+.board3d canvas {
+  display: block;
+}
+
 .square {
   position: relative;
   display: grid;

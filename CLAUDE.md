@@ -119,8 +119,17 @@ chess claims against the rules (the fork really attacks both pieces, the mate
 really is mate). `ExerciseBoard` lets the learner play whichever side is to
 move, so lessons can be played as Black (`orientation: "black"`).
 
-All three modes now exist. Next in the original plan: the 3D board, deploy,
-then VR.
+All three modes now exist.
+
+The 3D board is in `ui/board/board3d`. `ChessScene` is the chess set alone
+(board, pieces, highlights, picking by ray) with no camera or canvas, so the
+VR mode can put the same scene in a headset. `Board3D` adds the canvas,
+camera, orbit controls and mouse clicks and implements `BoardView`. Pieces
+are built in code in `pieceModels.ts`; there are no model files. The Play
+screen loads the 3D code only when the player presses "3D board", and falls
+back to 2D if the device cannot draw it. The tutorial stays 2D.
+
+Next in the original plan: deploy, then VR.
 
 ## What the proposal requires
 
@@ -148,7 +157,7 @@ Milestone 2 (Progress Report 2, week 9)
 6. Tutorial - done
 7. Mistake detection and post-game feedback - done
 8. Adaptive difficulty - done
-9. 3D board (Three.js)
+9. 3D board (Three.js) - done
 10. Deploy and full playthrough
 
 Then: WebXR VR mode (Progress Report 3, week 12).

@@ -84,10 +84,39 @@ export function createPlayScreen(
   screen.append(boardArea, sidePanel);
   container.replaceChildren(screen);
 
-  const board: BoardView = new Board2D(boardArea, {
-    onPick: (square) => selector.pick(square),
-    onDrop: (from, to) => selector.drop(from, to),
-  });
+  // What a board reports back. Both boards use the same two messages.
+  const boardEvents = {
+    onPick: (square: string) => selector.pick(square),
+    onDrop: (from: string, to: string) => selector.drop(from, to),
+  };
+  // The board on screen. It starts flat; the player can switch to 3D.
+  let board: BoardView = new Board2D(boardArea, boardEvents);
+  let boardKind: "2d" | "3d" = "2d";
+  let canUse3d = true;
+
+  /** Swaps the flat board for the 3D one, or back again. */
+  async function toggleBoardView(): Promise<void> {
+    if (boardKind === "3d") {
+      board.destroy();
+      board = new Board2D(boardArea, boardEvents);
+      boardKind = "2d";
+      draw();
+      return;
+    }
+    try {
+      // The 3D code is large, so it is only downloaded when first asked for.
+      const { Board3D } = await import("../board/board3d/board3d");
+      const board3d = new Board3D(boardArea, boardEvents);
+      board.destroy();
+      board = board3d;
+      boardKind = "3d";
+    } catch (error) {
+      // This device cannot draw 3D graphics. Keep the flat board and hide the button.
+      console.error("3D board unavailable:", error);
+      canUse3d = false;
+    }
+    draw();
+  }
 
   const promotion = createPromotionDialog({
     onChoose: (piece) => selector.choosePromotion(piece),
@@ -136,6 +165,7 @@ export function createPlayScreen(
       orientation = other(orientation);
       draw();
     },
+    onToggleView: () => void toggleBoardView(),
   });
   const moveList = createMoveList();
   const summary = createGameSummary({ onPlayAgain: () => game.newGame() });
@@ -238,7 +268,7 @@ export function createPlayScreen(
       reviews.map(commentOn),
       reviewer.pendingCount() > 0,
     );
-    controls.update(position.history.length > 0);
+    controls.update({ canUndo: position.history.length > 0, view: boardKind, canUse3d });
     moveList.update(position.history, helpMode === "none" ? [] : reviews);
     const gameSummary =
       againstComputer && position.status !== "playing"
