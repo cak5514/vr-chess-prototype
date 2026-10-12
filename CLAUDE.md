@@ -129,7 +129,13 @@ are built in code in `pieceModels.ts`; there are no model files. The Play
 screen loads the 3D code only when the player presses "3D board", and falls
 back to 2D if the device cannot draw it. The tutorial stays 2D.
 
-Next in the original plan: deploy, then VR.
+Deployment: `vite.config.ts` uses a relative `base`, so the built site works
+from any sub-folder. `.github/workflows/deploy.yml` tests, lints, builds and
+publishes to GitHub Pages on every push to `main` (the repository's Pages
+source must be set to "GitHub Actions" once). The built site is about 18 MB,
+mostly the ONNX runtime.
+
+Next in the original plan: publish, then VR.
 
 ## What the proposal requires
 
@@ -158,7 +164,8 @@ Milestone 2 (Progress Report 2, week 9)
 7. Mistake detection and post-game feedback - done
 8. Adaptive difficulty - done
 9. 3D board (Three.js) - done
-10. Deploy and full playthrough
+10. Deploy and full playthrough - prepared and tested locally; publishing
+    waits for the student to create the GitHub repository
 
 Then: WebXR VR mode (Progress Report 3, week 12).
 
