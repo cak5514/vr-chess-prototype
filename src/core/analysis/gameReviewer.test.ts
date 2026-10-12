@@ -160,6 +160,41 @@ describe("GameReviewer", () => {
     expect(reviewer.getReviews().map((review) => review.san)).toEqual(["Nf3"]);
   });
 
+  it("adds the trained model's ideas to each review", async () => {
+    const game = new Game();
+    const classifier = {
+      classify: vi.fn(async () => [
+        {
+          ideas: [
+            { label: "fork" as const, probability: 0.9 },
+            { label: "ordinary" as const, probability: 0.6 },
+          ],
+          all: [],
+        },
+      ]),
+    };
+    const reviewer = new GameReviewer(game, new ScriptedEngine(), { classifier });
+    reviewer.setPlayerColor("white");
+    game.attemptMove("e2", "e4");
+    await reviewer.whenIdle();
+
+    // "ordinary" means no idea was found, so it is dropped.
+    expect(reviewer.getReviews()[0].ideas).toEqual(["fork"]);
+    expect(classifier.classify).toHaveBeenCalledWith(expect.stringContaining("rnbqkbnr/pppppppp"), [
+      { from: "e2", to: "e4", promotion: undefined },
+    ]);
+  });
+
+  it("still reviews the move if the model fails", async () => {
+    const game = new Game();
+    const classifier = { classify: async () => Promise.reject(new Error("model did not load")) };
+    const reviewer = new GameReviewer(game, new ScriptedEngine(), { classifier });
+    reviewer.setPlayerColor("white");
+    game.attemptMove("e2", "e4");
+    await reviewer.whenIdle();
+    expect(reviewer.getReviews()).toMatchObject([{ san: "e4", ideas: [] }]);
+  });
+
   it("reviews black's moves when the player is black", async () => {
     const { game, reviewer } = setup();
     reviewer.setPlayerColor("black");

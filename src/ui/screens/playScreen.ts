@@ -1,5 +1,6 @@
 import {
   AdaptiveDifficulty,
+  commentOn,
   ComputerOpponent,
   describeThreat,
   findHint,
@@ -15,16 +16,18 @@ import type {
   Color,
   Hint,
   KeyValueStore,
+  MoveClassifier,
   MoveReview,
   RatingChange,
 } from "../../core/index";
 import { Board2D } from "../board/board2d/board2d";
 import type { BoardArrow, BoardView } from "../board/boardView";
 import { createCoachPanel } from "../panels/coachPanel";
+import { createCommentaryPanel } from "../panels/commentaryPanel";
 import { createControls } from "../panels/controls";
 import { createGameSetup } from "../panels/gameSetup";
 import { createGameSummary } from "../panels/gameSummary";
-import type { OpponentChoice } from "../panels/gameSetup";
+import type { HelpMode, OpponentChoice } from "../panels/gameSetup";
 import { createMoveList } from "../panels/moveList";
 import { createPromotionDialog } from "../panels/promotionDialog";
 import { createStatusBar } from "../panels/statusBar";
@@ -37,14 +40,19 @@ function other(color: Color): Color {
 }
 
 /** Builds the screen where a game is played: board on the left, panel on the right. */
-export function createPlayScreen(container: HTMLElement, engine: ChessEngine, store: KeyValueStore): void {
+export function createPlayScreen(
+  container: HTMLElement,
+  engine: ChessEngine,
+  store: KeyValueStore,
+  classifier: MoveClassifier,
+): void {
   const game = new Game();
   const selector = new MoveSelector(game);
   const adaptive = new AdaptiveDifficulty(store);
   const opponent = new ComputerOpponent(game, engine, adaptive.getLevel());
   // Created after the opponent on purpose: both react to each move, and the
   // opponent's request should reach the engine first so its reply is not delayed.
-  const reviewer = new GameReviewer(game, engine);
+  const reviewer = new GameReviewer(game, engine, { classifier });
 
   // The choices the player makes in the setup panel.
   let opponentChoice: OpponentChoice = "adaptive";
@@ -57,8 +65,11 @@ export function createPlayScreen(container: HTMLElement, engine: ChessEngine, st
   let levelChange: RatingChange | null = null;
   let gameRated = false;
 
-  // The coach's state. A hint belongs to one position and is dropped when it changes.
-  let coachEnabled = true;
+  // The kind of help the player chose. Commenter speaks only after a move;
+  // Hints helps before it. `coachEnabled` is shorthand for "Hints mode is on".
+  let helpMode: HelpMode = "commenter";
+  let coachEnabled = false;
+  // A hint belongs to one position and is dropped when the position changes.
   let hint: Hint | null = null;
   let hintLoading = false;
 
@@ -84,14 +95,8 @@ export function createPlayScreen(container: HTMLElement, engine: ChessEngine, st
   boardArea.append(promotion.element);
 
   const status = createStatusBar();
-  const coach = createCoachPanel({
-    onToggle: (enabled) => {
-      coachEnabled = enabled;
-      hint = null;
-      draw();
-    },
-    onHintRequested: () => void showHint(),
-  });
+  const coach = createCoachPanel({ onHintRequested: () => void showHint() });
+  const commentary = createCommentaryPanel();
   const setup = createGameSetup(
     {
       onOpponentChanged: (choice) => {
@@ -103,8 +108,15 @@ export function createPlayScreen(container: HTMLElement, engine: ChessEngine, st
         orientation = color;
         applySetup();
       },
+      onHelpModeChanged: (mode) => {
+        helpMode = mode;
+        coachEnabled = mode === "hints";
+        hint = null;
+        draw();
+      },
     },
     opponentChoice,
+    helpMode,
   );
   const controls = createControls({
     onNewGame: () => game.newGame(),
@@ -119,6 +131,7 @@ export function createPlayScreen(container: HTMLElement, engine: ChessEngine, st
   sidePanel.append(
     status.element,
     summary.element,
+    commentary.element,
     coach.element,
     controls.element,
     setup.element,
@@ -224,6 +237,12 @@ export function createPlayScreen(container: HTMLElement, engine: ChessEngine, st
       warnings: shownThreats.map(describeThreat),
       moveNotice: coachEnabled && position.status === "playing" ? lastMoveNotice(reviews) : null,
     });
+    // Commenter mode needs a single player to comment on, so it is off with two humans.
+    commentary.update(
+      helpMode === "commenter" && againstComputer,
+      reviews.map(commentOn),
+      reviewer.pendingCount() > 0,
+    );
     controls.update(position.history.length > 0);
     moveList.update(position.history, reviews);
     const gameSummary =

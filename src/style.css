@@ -621,6 +621,112 @@ p {
   font-size: 0.9rem;
 }
 
+/* ---------- Commentary (Commenter mode) ---------- */
+
+.commentary {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.commentary h2 {
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.commentary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.commentary-empty,
+.commentary-waiting {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.commentary-earlier {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+/* Each rating has its own colour, set once here and reused below. */
+.comment {
+  --rating: var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+.comment-sacrifice {
+  --rating: #7a3fc0;
+}
+
+.comment-best {
+  --rating: #1e7a4c;
+}
+
+.comment-good {
+  --rating: #3d7f5f;
+}
+
+.comment-inaccuracy {
+  --rating: #8a6500;
+}
+
+.comment-mistake {
+  --rating: #b85a00;
+}
+
+.comment-blunder {
+  --rating: var(--danger);
+}
+
+.comment-newest {
+  border: 2px solid var(--rating);
+  font-size: 0.95rem;
+}
+
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.comment-move {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.comment-rating {
+  color: var(--rating);
+}
+
+.comment-ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.comment-ideas span {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--rating);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 /* ---------- Post-game summary ---------- */
 
 .summary {

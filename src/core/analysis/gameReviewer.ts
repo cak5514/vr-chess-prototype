@@ -1,12 +1,19 @@
 import { Chess } from "chess.js";
 import type { ChessEngine } from "../engine/engine";
 import type { Game } from "../game/game";
-import type { Color, MoveRecord } from "../types";
+import type { IdeaLabel, MoveClassifier } from "../model/moveClassifier";
+import type { Color, MoveChoice, MoveRecord } from "../types";
 import { reviewMove } from "./moveReview";
 import type { MoveReview } from "./moveReview";
 
 /** How far ahead the engine looks when judging a move. */
 export const REVIEW_DEPTH = 10;
+
+export interface ReviewerOptions {
+  depth?: number;
+  /** The trained model. With it, each review also says which ideas the move carries. */
+  classifier?: MoveClassifier;
+}
 
 /**
  * Reviews the player's moves while the game is being played.
@@ -26,11 +33,16 @@ export class GameReviewer {
   private playerColor: Color | null = null;
   private listeners = new Set<() => void>();
 
+  private depth: number;
+  private classifier: MoveClassifier | null;
+
   constructor(
     private game: Game,
     private engine: ChessEngine,
-    private depth: number = REVIEW_DEPTH,
+    options: ReviewerOptions = {},
   ) {
+    this.depth = options.depth ?? REVIEW_DEPTH;
+    this.classifier = options.classifier ?? null;
     game.onPositionChanged(() => this.sync());
   }
 
@@ -108,14 +120,29 @@ export class GameReviewer {
         replyLine = after.lines[0];
       }
 
-      if (!this.isStillPlayed(ply, move)) return;
       const review = reviewMove({ ply, san: move.san, fenBefore: move.fenBefore, played, bestLine, replyLine });
+      review.ideas = await this.findIdeas(move.fenBefore, played);
+
+      if (!this.isStillPlayed(ply, move)) return;
       this.reviews.set(ply, { fenAfter: move.fenAfter, review });
     } catch {
       // If the engine fails, this move simply goes unreviewed.
     } finally {
       this.queued.delete(key);
       this.emit();
+    }
+  }
+
+  /** Asks the trained model which ideas the move carries. */
+  private async findIdeas(fen: string, played: MoveChoice): Promise<IdeaLabel[]> {
+    if (!this.classifier) return [];
+    try {
+      const [result] = await this.classifier.classify(fen, [played]);
+      // "ordinary" means "no idea found", so it is not an idea to report.
+      return result.ideas.map((idea) => idea.label).filter((label) => label !== "ordinary");
+    } catch {
+      // The review is still useful without the model's opinion.
+      return [];
     }
   }
 

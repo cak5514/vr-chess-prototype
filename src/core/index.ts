@@ -4,6 +4,8 @@
 
 export { GameReviewer } from "./analysis/gameReviewer";
 export type { MistakeTheme, MoveQuality, MoveReview } from "./analysis/moveReview";
+export { commentOn } from "./commenter/comment";
+export type { CommentRating, MoveComment } from "./commenter/comment";
 export { summariseGame } from "./feedback/summary";
 export type { GameResult, GameSummary } from "./feedback/summary";
 export { describeThreat, findThreatenedPieces } from "./analysis/threats";

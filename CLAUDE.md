@@ -88,8 +88,13 @@ Agreed with the student on 2026-10-12. These replace the single hint button.
   checkmates. Extends the tutorial; needs scripted opponent replies.
 - Plain play with no help stays available.
 
-Status: the classifier is trained and loads in the browser. The three modes
-are not built yet; build Commenter, then Coach, then Teacher.
+Status: Commenter is built. `GameReviewer` attaches the model's ideas and an
+`offered` flag (a piece put at risk) to each `MoveReview`, and
+`core/commenter/comment.ts` turns a review into a rating and text. A sound
+move that offers material is rated "sacrifice"; the same offer on an unsound
+move is a blunder. The Play screen has a Help setting: Commenter (default),
+Hints (the old hint button and warnings, to be replaced by Coach), or none.
+Still to build: Coach, then Teacher.
 
 ## What the proposal requires
 

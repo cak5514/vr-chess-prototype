@@ -1,7 +1,6 @@
 import type { Hint } from "../../core/index";
 
 export interface CoachActions {
-  onToggle(enabled: boolean): void;
   onHintRequested(): void;
 }
 
@@ -18,7 +17,7 @@ export interface CoachView {
   moveNotice: string | null;
 }
 
-/** The coach: an on/off switch, the hint button, and warnings about pieces in danger. */
+/** Hints mode: the hint button, warnings about pieces in danger, and notes on mistakes. */
 export function createCoachPanel(actions: CoachActions) {
   const element = document.createElement("section");
   element.className = "coach";
@@ -26,17 +25,8 @@ export function createCoachPanel(actions: CoachActions) {
   const header = document.createElement("div");
   header.className = "coach-header";
   const title = document.createElement("h2");
-  title.textContent = "Coach";
-
-  const toggle = document.createElement("label");
-  toggle.className = "coach-toggle";
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.addEventListener("change", () => actions.onToggle(checkbox.checked));
-  const toggleText = document.createElement("span");
-  toggleText.textContent = "Help on";
-  toggle.append(checkbox, toggleText);
-  header.append(title, toggle);
+  title.textContent = "Hints";
+  header.append(title);
 
   const body = document.createElement("div");
   body.className = "coach-body";
@@ -65,8 +55,9 @@ export function createCoachPanel(actions: CoachActions) {
   return {
     element,
     update(view: CoachView): void {
-      checkbox.checked = view.enabled;
-      body.hidden = !view.enabled;
+      // The whole panel is only shown in Hints mode.
+      element.hidden = !view.enabled;
+      if (!view.enabled) return;
 
       notice.textContent = view.moveNotice ?? "";
       notice.hidden = view.moveNotice === null;

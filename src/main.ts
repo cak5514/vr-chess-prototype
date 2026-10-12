@@ -1,6 +1,7 @@
 import "./style.css";
 import { TutorialProgress, UciEngine } from "./core/index";
 import { createBrowserStorage } from "./platform/browserStorage";
+import { createOnnxMoveClassifier } from "./platform/onnxMoveClassifier";
 import { createStockfishTransport } from "./platform/stockfishWorker";
 import { createPlayScreen } from "./ui/screens/playScreen";
 import { createTutorialScreen } from "./ui/screens/tutorialScreen";
@@ -57,7 +58,11 @@ const engine = new UciEngine(createStockfishTransport());
 const storage = createBrowserStorage();
 const progress = new TutorialProgress(storage);
 
-createPlayScreen(screens.play, engine, storage);
+// The trained model that names the idea behind a move. It is only downloaded
+// the first time a move is reviewed.
+const classifier = createOnnxMoveClassifier();
+
+createPlayScreen(screens.play, engine, storage, classifier);
 createTutorialScreen(screens.learn, progress, { onPlay: () => show("play") });
 
 // Someone who has never finished a lesson starts with the tutorial.

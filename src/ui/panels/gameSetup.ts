@@ -7,15 +7,46 @@ import type { Color, LevelId } from "../../core/index";
  */
 export type OpponentChoice = "adaptive" | LevelId | "friend";
 
+/**
+ * The kind of help the player gets during a game.
+ * - "commenter": nothing before the move; a rating and reasons after it
+ * - "hints": a suggested move on request, and warnings about pieces in danger
+ * - "none": no help at all
+ */
+export type HelpMode = "commenter" | "hints" | "none";
+
+const HELP_DESCRIPTIONS: Record<HelpMode, string> = {
+  commenter: "Says nothing before you move. After each move it rates the move and explains why.",
+  hints: "Suggests a move when you ask, and warns you about pieces in danger.",
+  none: "No help. Test what you have learned.",
+};
+
 export interface GameSetupActions {
   onOpponentChanged(choice: OpponentChoice): void;
   onPlayerColorChanged(color: Color): void;
+  onHelpModeChanged(mode: HelpMode): void;
 }
 
-/** The two drop-downs that choose the opponent and which colour you play. */
-export function createGameSetup(actions: GameSetupActions, initial: OpponentChoice) {
+/** The drop-downs that choose the help style, the opponent and which colour you play. */
+export function createGameSetup(actions: GameSetupActions, initial: OpponentChoice, initialHelp: HelpMode) {
   const element = document.createElement("section");
   element.className = "game-setup";
+
+  const help = document.createElement("select");
+  help.append(
+    new Option("Commenter", "commenter"),
+    new Option("Hints", "hints"),
+    new Option("No help", "none"),
+  );
+  help.value = initialHelp;
+  const helpDescription = document.createElement("p");
+  helpDescription.className = "setup-description";
+  helpDescription.textContent = HELP_DESCRIPTIONS[initialHelp];
+  help.addEventListener("change", () => {
+    const mode = help.value as HelpMode;
+    helpDescription.textContent = HELP_DESCRIPTIONS[mode];
+    actions.onHelpModeChanged(mode);
+  });
 
   const opponent = document.createElement("select");
   opponent.append(new Option("Computer: Adaptive (recommended)", "adaptive"));
@@ -51,7 +82,13 @@ export function createGameSetup(actions: GameSetupActions, initial: OpponentChoi
   });
   color.addEventListener("change", () => actions.onPlayerColorChanged(color.value as Color));
 
-  element.append(field("Opponent", opponent), description, colorField);
+  element.append(
+    field("Help", help),
+    helpDescription,
+    field("Opponent", opponent),
+    description,
+    colorField,
+  );
   refresh();
   return {
     element,

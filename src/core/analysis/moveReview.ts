@@ -4,7 +4,8 @@ import type { EngineLine } from "../engine/engine";
 import { PIECE_NAMES, PROMOTION_CODES } from "../game/chessJsHelpers";
 import { moveInWords } from "../hints/boardFacts";
 import { explainMove } from "../hints/hint";
-import type { Color, MoveChoice } from "../types";
+import type { IdeaLabel } from "../model/moveClassifier";
+import type { Color, MoveChoice, PieceType, Square } from "../types";
 import { findThreatenedPieces, PIECE_VALUES } from "./threats";
 
 /** How good a move was, compared with the best move available. */
@@ -29,6 +30,35 @@ export interface MoveReview {
   explanation: string | null;
   /** The move the engine preferred. */
   best: MoveChoice | null;
+  /** The position the move was played in, and the move itself. */
+  fenBefore: string;
+  played: MoveChoice;
+  /**
+   * Set when the move put a piece where it can be captured at a loss.
+   * Whether that is a sacrifice or a blunder depends on `quality`: if the
+   * move is still good, the material was given up on purpose and it works.
+   */
+  offered: { piece: PieceType; square: Square } | null;
+  /** Ideas the trained model recognised in the move (fork, pin...). Empty without a model. */
+  ideas: IdeaLabel[];
+}
+
+/** A piece counts as "given up" when at least this many points are at risk. */
+const MIN_OFFERED_VALUE = 2;
+
+/**
+ * Checks whether a move leaves the moved piece where it can be captured at a
+ * loss. A knight stepping onto a square a pawn attacks is an offer; a bishop
+ * taking a defended knight is an even trade and is not.
+ */
+function findOffer(played: Move): MoveReview["offered"] {
+  const me: Color = played.color === "w" ? "white" : "black";
+  const arrived = PIECE_NAMES[played.promotion ?? played.piece];
+  const atRisk = findThreatenedPieces(played.after, me).some((threat) => threat.square === played.to);
+  if (!atRisk) return null;
+  const alreadyWon = played.captured ? PIECE_VALUES[PIECE_NAMES[played.captured]] : 0;
+  if (PIECE_VALUES[arrived] - alreadyWon < MIN_OFFERED_VALUE) return null;
+  return { piece: arrived, square: played.to };
 }
 
 /**
@@ -98,7 +128,18 @@ function playOn(fen: string, move: MoveChoice): { chess: Chess; move: Move } | n
 export function reviewMove(input: ReviewInput): MoveReview {
   const { ply, san, fenBefore, played, bestLine, replyLine } = input;
   const best = bestLine?.move ?? null;
-  const base = { ply, moveNumber: Math.floor(ply / 2) + 1, san, best };
+  const after = playOn(fenBefore, played);
+  const base = {
+    ply,
+    moveNumber: Math.floor(ply / 2) + 1,
+    san,
+    best,
+    fenBefore,
+    played,
+    offered: after ? findOffer(after.move) : null,
+    // Filled in afterwards by the reviewer, if a trained model is available.
+    ideas: [] as IdeaLabel[],
+  };
   const fine = (quality: "best" | "good"): MoveReview => ({
     ...base,
     quality,
@@ -107,7 +148,6 @@ export function reviewMove(input: ReviewInput): MoveReview {
     explanation: null,
   });
 
-  const after = playOn(fenBefore, played);
   if (!after || !best) return fine("good");
   // Delivering checkmate, or playing the engine's own choice, cannot be improved on.
   if (after.chess.isCheckmate() || sameMove(played, best)) return fine("best");

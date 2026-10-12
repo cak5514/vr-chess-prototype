@@ -13,7 +13,20 @@ function play(moves: [string, string][], fen?: string) {
 }
 
 function review(quality: MoveQuality, theme: MistakeTheme | null = null, lossCp = 0, san = "x"): MoveReview {
-  return { ply: 0, moveNumber: 1, san, quality, lossCp, theme, explanation: theme ? "why" : null, best: null };
+  return {
+    ply: 0,
+    moveNumber: 1,
+    san,
+    quality,
+    lossCp,
+    theme,
+    explanation: theme ? "why" : null,
+    best: null,
+    fenBefore: "",
+    played: { from: "a1", to: "a2" },
+    offered: null,
+    ideas: [],
+  };
 }
 
 const FOOLS_MATE: [string, string][] = [["f2", "f3"], ["e7", "e5"], ["g2", "g4"], ["d8", "h4"]];
