@@ -1,56 +1,20 @@
 import { Chess } from "chess.js";
-import type { Move, PieceSymbol, Square as ChessJsSquare } from "chess.js";
+import type { Move, Square as ChessJsSquare } from "chess.js";
 import { isSquare } from "../types";
+import { PIECE_NAMES, PROMOTION_CODES, toColor, toMoveRecord } from "./chessJsHelpers";
 import type {
-  Color,
   DrawReason,
   GameInput,
   GameStatus,
-  MoveRecord,
+  MoveChoice,
   MoveResult,
   Piece,
-  PieceType,
   Position,
   PositionListener,
   PromotionPiece,
   Square,
 } from "../types";
 
-// chess.js uses one-letter codes. The rest of the app uses full words,
-// so the translation happens here and nowhere else.
-const PIECE_NAMES: Record<PieceSymbol, PieceType> = {
-  p: "pawn",
-  n: "knight",
-  b: "bishop",
-  r: "rook",
-  q: "queen",
-  k: "king",
-};
-
-const PROMOTION_CODES: Record<PromotionPiece, PieceSymbol> = {
-  queen: "q",
-  rook: "r",
-  bishop: "b",
-  knight: "n",
-};
-
-function toColor(code: "w" | "b"): Color {
-  return code === "w" ? "white" : "black";
-}
-
-function toMoveRecord(move: Move): MoveRecord {
-  return {
-    from: move.from,
-    to: move.to,
-    color: toColor(move.color),
-    piece: PIECE_NAMES[move.piece],
-    captured: move.captured ? PIECE_NAMES[move.captured] : undefined,
-    promotion: move.promotion ? (PIECE_NAMES[move.promotion] as PromotionPiece) : undefined,
-    san: move.san,
-    isCastle: move.isKingsideCastle() || move.isQueensideCastle(),
-    isEnPassant: move.isEnPassant(),
-  };
-}
 
 /**
  * One game of chess. chess.js knows the rules; this class wraps it in the
@@ -100,6 +64,15 @@ export class Game implements GameInput {
   isPromotionMove(from: Square, to: Square): boolean {
     if (!isSquare(from) || !isSquare(to)) return false;
     return this.legalMoves(from).some((move) => move.to === to && move.isPromotion());
+  }
+
+  /** Every legal move for the side whose turn it is. */
+  allLegalMoves(): MoveChoice[] {
+    return this.chess.moves({ verbose: true }).map((move) => ({
+      from: move.from,
+      to: move.to,
+      promotion: move.promotion ? (PIECE_NAMES[move.promotion] as PromotionPiece) : undefined,
+    }));
   }
 
   /** Takes back the last move. Returns false if there is nothing to undo. */

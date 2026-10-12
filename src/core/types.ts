@@ -27,6 +27,16 @@ export interface MoveRecord {
   san: string;
   isCastle: boolean;
   isEnPassant: boolean;
+  /** The position just before and just after this move, as FEN strings. */
+  fenBefore: string;
+  fenAfter: string;
+}
+
+/** A move someone wants to play: just the squares, before it is checked. */
+export interface MoveChoice {
+  from: Square;
+  to: Square;
+  promotion?: PromotionPiece;
 }
 
 export type GameStatus = "playing" | "checkmate" | "stalemate" | "draw";

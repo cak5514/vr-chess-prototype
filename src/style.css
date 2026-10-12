@@ -1,20 +1,961 @@
 :root {
+  --page: #f4f1ea;
+  --panel: #ffffff;
+  --ink: #1f2430;
+  --ink-soft: #5a6072;
+  --line: #ddd6c8;
+  --accent: #2f6f4f;
+  --accent-ink: #ffffff;
+  --danger: #c0392b;
+  --warning: #d9730d;
+
+  /* Hint colours: the same colour is used on the board and beside the reason. */
+  --mark-control: #2f7fd1;
+  --mark-attack: #d1362f;
+  --mark-danger: #e08a1a;
+  --mark-support: #8a52c7;
+
+  --square-light: #ecdcc0;
+  --square-dark: #a97b55;
+  --square-selected: #f2d34c;
+  --square-last-move: rgba(242, 211, 76, 0.45);
+
   font-family: system-ui, "Segoe UI", sans-serif;
-  color: #1f2430;
-  background: #f4f1ea;
+  color: var(--ink);
+  background: var(--page);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
 }
 
-.welcome {
-  max-width: 40rem;
-  margin: 4rem auto;
-  padding: 0 1rem;
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.app-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.app-header h1 {
+  font-size: 1.25rem;
+}
+
+.app-nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.app-nav button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Tutorial: lesson list ---------- */
+
+.lesson-list {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.lesson-list h2 {
+  font-size: 1.4rem;
+}
+
+.lesson-list-intro {
+  margin-top: 0.3rem;
+  color: var(--ink-soft);
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.9rem;
+  margin-top: 1.2rem;
+}
+
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.lesson-card.lesson-done {
+  border-color: var(--accent);
+  background: #eef6f1;
+}
+
+.lesson-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.2rem;
+  border-radius: 8px;
+  background: var(--square-dark);
+  cursor: pointer;
+}
+
+/* Board pieces size themselves from the board; here the size is fixed. */
+.lesson-icon.piece {
+  font-size: 2.2rem;
+}
+
+/* A tiny four-square checkerboard for the board lesson. */
+.lesson-icon-board {
+  background: conic-gradient(
+    var(--square-light) 25%,
+    var(--square-dark) 0 50%,
+    var(--square-light) 0 75%,
+    var(--square-dark) 0
+  );
+}
+
+.lesson-summary {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.lesson-state {
+  margin-top: 0.3rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.lesson-finished {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: #eef6f1;
+}
+
+/* ---------- Tutorial: inside a lesson ---------- */
+
+.lesson-screen {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* One column: the speech bubble, then the board, both the same width. */
+.lesson-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  /* Leaves room for the header and the bubble so the board still fits on screen. */
+  width: min(100%, max(20rem, calc(100vh - 17rem)), 640px);
+}
+
+.lesson-column .board-area {
+  width: 100%;
+}
+
+.lesson-bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  /* Tall enough for most steps, so the board does not jump between them. */
+  min-height: 9.5rem;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 3px 10px rgba(31, 36, 48, 0.12);
+}
+
+/* The little pointer that makes the box a speech bubble aimed at the board. */
+.lesson-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -0.55rem;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  background: var(--panel);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.lesson-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.lesson-top .link-button {
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.lesson-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* Pushes the buttons to the bottom of the bubble. */
+  margin-top: auto;
+}
+
+/* The middle of the button row stretches, sending Next to the right edge. */
+.lesson-buttons .lesson-moves {
+  flex: 1;
   text-align: center;
 }
 
-.check {
-  color: #5a6072;
+.lesson-kicker {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.lesson-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.lesson-progress div {
+  height: 100%;
+  background: var(--accent);
+}
+
+.lesson-text {
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.lesson-moves {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.lesson-feedback {
+  padding: 0.6rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.feedback-success {
+  border-left: 4px solid var(--accent);
+  background: #eef6f1;
+}
+
+.feedback-retry {
+  border-left: 4px solid var(--warning);
+  background: #fdf1e3;
+}
+
+.lesson-complete h2 {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+/* ---------- Play screen layout ---------- */
+
+.play-screen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1.5rem 1rem;
+}
+
+.board-area {
+  position: relative;
+  /* As big as fits: limited by both the window's width and its height. */
+  width: min(100%, calc(100vh - 7rem), 640px);
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(100%, 20rem);
+}
+
+/* ---------- Board ---------- */
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  aspect-ratio: 1;
+  border: 4px solid #6b4a2f;
+  border-radius: 6px;
+  overflow: hidden;
+  user-select: none;
+  /* Lets a finger drag a piece instead of scrolling the page. */
+  touch-action: none;
+  /* Lets sizes inside the board be a percentage of its width (cqw units). */
+  container-type: inline-size;
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+}
+
+.square.light {
+  background: var(--square-light);
+}
+
+.square.dark {
+  background: var(--square-dark);
+}
+
+.square.last-move::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--square-last-move);
+}
+
+.square.selected {
+  background: var(--square-selected);
+}
+
+.square.in-check {
+  background: radial-gradient(circle, #ff6b5a 0%, var(--danger) 55%, transparent 80%);
+}
+
+/* A dot on empty squares the piece can move to. */
+.square.target::after {
+  content: "";
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(31, 36, 48, 0.3);
+}
+
+/* A ring around enemy pieces it can capture. */
+.square.target-capture::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 0.7cqw solid rgba(192, 57, 43, 0.75);
+}
+
+.square.target,
+.square.target-capture {
+  cursor: pointer;
+}
+
+/* An orange frame and "!" badge on a piece that is in danger. */
+.square.warning {
+  box-shadow: inset 0 0 0 0.6cqw var(--warning);
+}
+
+.square.warning::before {
+  content: "!";
+  position: absolute;
+  top: 4%;
+  right: 4%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3.4cqw;
+  height: 3.4cqw;
+  border-radius: 50%;
+  background: var(--warning);
+  color: #fff;
+  font-size: 2.6cqw;
+  font-weight: 700;
+}
+
+/* A colour wash over a square that a hint is talking about. */
+.square-mark {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.mark-control {
+  background: var(--mark-control);
+}
+
+.mark-attack {
+  background: var(--mark-attack);
+}
+
+.mark-danger {
+  background: var(--mark-danger);
+}
+
+.mark-support {
+  background: var(--mark-support);
+}
+
+.arrow-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.arrow-layer polygon {
+  fill-opacity: 0.85;
+  stroke: #fff;
+  stroke-opacity: 0.85;
+  stroke-width: 0.04;
+  stroke-linejoin: round;
+}
+
+.arrow-move {
+  fill: var(--accent);
+}
+
+.arrow-control {
+  fill: var(--mark-control);
+}
+
+.arrow-attack {
+  fill: var(--mark-attack);
+}
+
+.arrow-danger {
+  fill: var(--mark-danger);
+}
+
+.arrow-support {
+  fill: var(--mark-support);
+}
+
+.coord {
+  position: absolute;
+  font-size: 2.4cqw;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.rank-label {
+  top: 3%;
+  left: 5%;
+}
+
+.file-label {
+  bottom: 2%;
+  right: 6%;
+}
+
+.square.light .coord {
+  color: var(--square-dark);
+}
+
+.square.dark .coord {
+  color: var(--square-light);
+}
+
+/* ---------- Pieces ---------- */
+
+.piece {
+  position: relative;
+  z-index: 1;
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", sans-serif;
+  font-size: 9.5cqw;
+  line-height: 1;
+  cursor: grab;
+  /* Draw the outline behind the fill so it does not thin the shape. */
+  paint-order: stroke fill;
+}
+
+.piece.white {
+  color: #fdfbf5;
+  -webkit-text-stroke: 0.14em #2a2622;
+}
+
+.piece.black {
+  color: #2a2622;
+  -webkit-text-stroke: 0.06em #f1e9da;
+}
+
+.piece.dragging {
+  opacity: 0.25;
+}
+
+.drag-ghost {
+  position: fixed;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  cursor: grabbing;
+}
+
+/* ---------- Side panel ---------- */
+
+.status,
+.move-list {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.status-headline {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.status-detail {
+  margin-top: 0.25rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.status-detail:empty {
+  display: none;
+}
+
+.status-check {
+  border-color: var(--danger);
+}
+
+.status-check .status-headline {
+  color: var(--danger);
+}
+
+.status-over {
+  border-color: var(--accent);
+  background: #eef6f1;
+}
+
+.status-error {
+  border-color: var(--danger);
+}
+
+/* ---------- Coach ---------- */
+
+.coach {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.coach-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.coach-header h2 {
+  font-size: 1rem;
+}
+
+.coach-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.coach-toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
+.coach-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.coach-body[hidden],
+.coach-warnings[hidden],
+.coach-hint[hidden] {
+  display: none;
+}
+
+.coach-notice {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--danger);
+  border-radius: 4px;
+  background: #fdecea;
+  font-size: 0.9rem;
+}
+
+/* ---------- Post-game summary ---------- */
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.summary h2 {
+  font-size: 1.1rem;
+}
+
+.summary h3 {
+  margin: 0.3rem 0 0;
+  font-size: 0.95rem;
+}
+
+.summary-result {
+  font-weight: 600;
+}
+
+.result-win {
+  color: var(--accent);
+}
+
+.result-loss {
+  color: var(--danger);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.summary-stats dt {
+  color: var(--ink-soft);
+}
+
+.summary-stats dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-counts,
+.summary-pending {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.summary-mistakes,
+.summary-advice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.summary-mistakes li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 4px;
+  background: #fdf1e3;
+}
+
+.summary-advice li {
+  padding: 0.5rem 0.6rem;
+  border-radius: 4px;
+  background: #eef6f1;
+}
+
+.summary-level {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.move-inaccuracy {
+  color: #9a6a00;
+}
+
+.move-mistake {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.move-blunder {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.coach-warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coach-warnings li {
+  padding: 0.5rem 0.6rem;
+  border-left: 4px solid var(--warning);
+  border-radius: 4px;
+  background: #fdf1e3;
+  font-size: 0.9rem;
+}
+
+.coach-hint {
+  padding: 0.6rem 0.7rem;
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+  background: #eef6f1;
+  font-size: 0.9rem;
+}
+
+.coach-hint p + p {
+  margin-top: 0.3rem;
+}
+
+.coach-hint-title {
+  font-weight: 600;
+}
+
+.reason-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.4rem;
+  border-radius: 3px;
+  vertical-align: baseline;
+}
+
+.dot-control {
+  background: var(--mark-control);
+}
+
+.dot-attack {
+  background: var(--mark-attack);
+}
+
+.dot-danger {
+  background: var(--mark-danger);
+}
+
+.dot-support {
+  background: var(--mark-support);
+}
+
+button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+button.primary:hover:not(:disabled) {
+  background: #25583f;
+}
+
+.game-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.field[hidden] {
+  display: none;
+}
+
+select {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+}
+
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.setup-description {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.move-list h2 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.move-list-empty {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.move-list ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.move-list li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 1fr;
+  padding: 0.2rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.move-number {
+  color: var(--ink-soft);
+}
+
+/* ---------- Promotion dialog ---------- */
+
+.promotion-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(31, 36, 48, 0.55);
+  border-radius: 6px;
+}
+
+.promotion-overlay[hidden] {
+  display: none;
+}
+
+.promotion-box {
+  max-width: 24rem;
+  padding: 1.25rem;
+  border-radius: 10px;
+  background: var(--panel);
+  text-align: center;
+}
+
+.promotion-box h2 {
+  font-size: 1.1rem;
+}
+
+.promotion-box p {
+  margin-top: 0.4rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.promotion-choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.promotion-choices button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.85rem;
+  background: var(--square-light);
+}
+
+.promotion-choices .piece {
+  font-size: 2.5rem;
+  cursor: pointer;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  text-decoration: underline;
 }

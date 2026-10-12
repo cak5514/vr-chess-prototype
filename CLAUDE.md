@@ -30,7 +30,39 @@ that implement interfaces defined in core and are passed in from `main.ts`.
 - Every input source (mouse, VR controller, camera) drives the game through
   the same core interface: `attemptMove(from, to)` plus a position-changed event.
 - 2D and 3D boards implement the same `BoardView` interface.
+- Boards only report "square picked" and "piece dropped". The pick-then-move
+  logic lives in `core/input/moveSelector.ts` so every board and mode shares it.
 - ESLint enforces the import rules (`eslint.config.js`).
+- The engine is the `ChessEngine` interface in `core/engine`. `UciEngine`
+  speaks the UCI protocol over a `UciTransport`; the real transport is the
+  Stockfish Web Worker in `platform/`, and tests use `FakeTransport`.
+- Engine files are in `public/stockfish/` (lite single-threaded build, GPL v3).
+  They are copied in by hand, not installed from npm.
+- `ComputerOpponent` plays its moves through the same `attemptMove()` as the
+  human. Use its `undoTurn()` for undo so the computer's reply is undone too.
+
+- Hints: the engine picks the move (`core/hints`), then fixed rules explain
+  it in plain English. Every reason also returns the squares and arrows that
+  show it on the board, colour-coded by `MarkKind`; when adding a rule, give
+  it marks too. Warnings come from `core/analysis/threats.ts`, which
+  counts attackers and defenders and does not use the engine.
+
+- Move review (Module III): `GameReviewer` asks the engine about each player
+  move in the background while the game is played. `reviewMove` compares the
+  best move's score with the score after the move played, labels the loss
+  (inaccuracy 60, mistake 150, blunder 300 centipawns) and explains it.
+  `summariseGame` in `core/feedback` builds the post-game summary and advice.
+- Adaptive difficulty (Module II): `core/difficulty/adaptive.ts` keeps a rating
+  from 1 to 10 that `rateGame` moves up after wins and down after losses with
+  blunders. Only games against the "Adaptive" opponent change it.
+- Tutorial: lesson content is plain data in `core/tutorial/lessons.ts`.
+  `LessonSession` runs a lesson on an `ExerciseBoard`, a practice board that
+  implements `GameInput` (so boards and `MoveSelector` work on it), allows
+  positions without kings, and lets white move repeatedly. A test proves every
+  exercise is solvable, so run `npm test` after editing lessons.
+- Saved progress goes through the `KeyValueStore` interface in
+  `core/progress`; the localStorage version is in `platform/`.
+- `main.ts` builds the Learn and Play screens once and only hides/shows them.
 
 ## What the proposal requires
 
@@ -50,14 +82,14 @@ The submitted proposal wins over any other instruction.
 Milestone 1 (Progress Report 1, week 5)
 1. Scaffold - done
 2. Core game: rules, `attemptMove`, position events, undo, new game - done
-3. 2D board: click/drag, highlights, promotion, move list, flip
-4. Engine: Stockfish worker, three starting levels
-5. Hints and attacked/hanging-piece warnings
+3. 2D board: click/drag, highlights, promotion, move list, flip - done
+4. Engine: Stockfish worker, three starting levels - done
+5. Hints and attacked/hanging-piece warnings - done
 
 Milestone 2 (Progress Report 2, week 9)
-6. Tutorial
-7. Mistake detection and post-game feedback
-8. Adaptive difficulty
+6. Tutorial - done
+7. Mistake detection and post-game feedback - done
+8. Adaptive difficulty - done
 9. 3D board (Three.js)
 10. Deploy and full playthrough
 
