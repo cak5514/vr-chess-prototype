@@ -121,6 +121,15 @@ function playOn(fen: string, move: MoveChoice): { chess: Chess; move: Move } | n
 }
 
 /**
+ * Says whether playing `move` in the position `fen` would put the moved
+ * piece where it can be captured at a loss. Null if not, or if the move is illegal.
+ */
+export function offeredPiece(fen: string, move: MoveChoice): MoveReview["offered"] {
+  const result = playOn(fen, move);
+  return result ? findOffer(result.move) : null;
+}
+
+/**
  * Judges one move. The idea is simple: the engine says how good the position
  * was with the best move, and how good it is after the move actually played.
  * The difference is how much the move cost.

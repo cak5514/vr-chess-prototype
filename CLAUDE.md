@@ -92,9 +92,21 @@ Status: Commenter is built. `GameReviewer` attaches the model's ideas and an
 `offered` flag (a piece put at risk) to each `MoveReview`, and
 `core/commenter/comment.ts` turns a review into a rating and text. A sound
 move that offers material is rated "sacrifice"; the same offer on an unsound
-move is a blunder. The Play screen has a Help setting: Commenter (default),
-Hints (the old hint button and warnings, to be replaced by Coach), or none.
-Still to build: Coach, then Teacher.
+move is a blunder.
+
+Coach is built too (`core/coach/candidates.ts`). It asks the engine for its
+top 8 moves, keeps those within `SOUND_MARGIN` (50 centipawns) of the best,
+and sorts them into categories with `decideCategory`: the engine checks
+whether capturing an offered piece is a mistake (trap) or playable
+(sacrifice); otherwise the main hint reason's `purpose` decides, with the
+model able to upgrade quiet moves. Groups are alphabetical so the best move
+is not revealed. Each `HintReason` now carries a `purpose`; when adding a hint
+rule, make sure the right purpose is set before `add()`.
+
+The Play screen's Help setting is Commenter (default), Coach, or none. The
+old hint button and danger warnings are gone from the screen; `findHint` and
+`findThreatenedPieces` remain in core because Coach and Commenter use the
+rules behind them. Still to build: Teacher.
 
 ## What the proposal requires
 

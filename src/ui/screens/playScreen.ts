@@ -2,22 +2,20 @@ import {
   AdaptiveDifficulty,
   commentOn,
   ComputerOpponent,
-  describeThreat,
-  findHint,
-  findThreatenedPieces,
+  findCandidates,
   Game,
   GameReviewer,
   getLevel,
+  groupByCategory,
   MoveSelector,
   summariseGame,
 } from "../../core/index";
 import type {
+  Candidate,
   ChessEngine,
   Color,
-  Hint,
   KeyValueStore,
   MoveClassifier,
-  MoveReview,
   RatingChange,
 } from "../../core/index";
 import { Board2D } from "../board/board2d/board2d";
@@ -32,11 +30,14 @@ import { createMoveList } from "../panels/moveList";
 import { createPromotionDialog } from "../panels/promotionDialog";
 import { createStatusBar } from "../panels/statusBar";
 
-/** Showing every piece in danger at once is overwhelming, so list only the worst. */
-const MAX_WARNINGS = 2;
-
 function other(color: Color): Color {
   return color === "white" ? "black" : "white";
+}
+
+/** The coach's suggestions, and the position they were worked out for. */
+interface CoachAdvice {
+  fen: string;
+  candidates: Candidate[];
 }
 
 /** Builds the screen where a game is played: board on the left, panel on the right. */
@@ -65,13 +66,13 @@ export function createPlayScreen(
   let levelChange: RatingChange | null = null;
   let gameRated = false;
 
-  // The kind of help the player chose. Commenter speaks only after a move;
-  // Hints helps before it. `coachEnabled` is shorthand for "Hints mode is on".
+  // The kind of help the player chose.
   let helpMode: HelpMode = "commenter";
-  let coachEnabled = false;
-  // A hint belongs to one position and is dropped when the position changes.
-  let hint: Hint | null = null;
-  let hintLoading = false;
+  // Coach mode: the suggestions for the current position, the position we
+  // are waiting on, and the suggestion the player is looking at.
+  let advice: CoachAdvice | null = null;
+  let adviceRequestedFor: string | null = null;
+  let previewed: Candidate | null = null;
 
   const screen = document.createElement("main");
   screen.className = "play-screen";
@@ -95,7 +96,17 @@ export function createPlayScreen(
   boardArea.append(promotion.element);
 
   const status = createStatusBar();
-  const coach = createCoachPanel({ onHintRequested: () => void showHint() });
+  const coach = createCoachPanel({
+    onPreview: (candidate) => {
+      previewed = candidate;
+      draw();
+    },
+    // Picking a suggestion plays it through the same door as a mouse move.
+    onChoose: (candidate) => {
+      previewed = null;
+      game.attemptMove(candidate.move.from, candidate.move.to, candidate.move.promotion);
+    },
+  });
   const commentary = createCommentaryPanel();
   const setup = createGameSetup(
     {
@@ -110,8 +121,8 @@ export function createPlayScreen(
       },
       onHelpModeChanged: (mode) => {
         helpMode = mode;
-        coachEnabled = mode === "hints";
-        hint = null;
+        previewed = null;
+        refreshCoach();
         draw();
       },
     },
@@ -131,8 +142,8 @@ export function createPlayScreen(
   sidePanel.append(
     status.element,
     summary.element,
-    commentary.element,
     coach.element,
+    commentary.element,
     controls.element,
     setup.element,
     moveList.element,
@@ -151,6 +162,7 @@ export function createPlayScreen(
       opponent.setLevel(opponentChoice === "adaptive" ? adaptive.getLevel() : getLevel(opponentChoice));
       opponent.setComputerColor(other(playerColor));
     }
+    refreshCoach();
     draw();
   }
 
@@ -161,37 +173,26 @@ export function createPlayScreen(
     return opponentChoice === "friend" || position.turn === playerColor;
   }
 
-  async function showHint(): Promise<void> {
-    if (!isHumanTurn() || hintLoading) return;
+  /** In Coach mode, asks for suggestions whenever it becomes the player's turn. */
+  function refreshCoach(): void {
+    if (helpMode !== "coach" || !isHumanTurn() || engineError) return;
     const { fen, lastMove } = game.getPosition();
-    hintLoading = true;
-    draw();
-    try {
-      const found = await findHint(engine, fen, lastMove);
-      // Only show it if the board is still the one we asked about.
-      if (game.getPosition().fen === fen) hint = found;
-    } catch (error) {
-      console.error("Chess engine problem:", error);
-      engineError = true;
-    }
-    hintLoading = false;
-    draw();
-  }
+    if (advice?.fen === fen || adviceRequestedFor === fen) return;
 
-  /**
-   * A comment on the player's most recent move, if it was a mistake or a
-   * blunder. It appears a moment after the move, once the engine has checked it.
-   */
-  function lastMoveNotice(reviews: MoveReview[]): string | null {
-    const history = game.getPosition().history;
-    // Find the player's latest move: the last one, or the one before the computer's reply.
-    let ply = history.length - 1;
-    while (ply >= 0 && history[ply].color !== playerColor) ply--;
-    if (ply < history.length - 2) return null;
-
-    const review = reviews.find((item) => item.ply === ply);
-    if (!review || (review.quality !== "mistake" && review.quality !== "blunder")) return null;
-    return `Your move ${review.san} was a ${review.quality}. ${review.explanation ?? ""} You can press Undo to try again.`;
+    adviceRequestedFor = fen;
+    findCandidates(engine, classifier, fen, lastMove)
+      .then((candidates) => {
+        // Only keep the answer if the board is still the one we asked about.
+        if (game.getPosition().fen === fen) advice = { fen, candidates };
+      })
+      .catch((error) => {
+        console.error("Chess engine problem:", error);
+        engineError = true;
+      })
+      .finally(() => {
+        if (adviceRequestedFor === fen) adviceRequestedFor = null;
+        draw();
+      });
   }
 
   // One function redraws everything from the current game and selection.
@@ -202,18 +203,13 @@ export function createPlayScreen(
     const humanTurn = isHumanTurn();
     const reviews = reviewer.getReviews();
 
-    // Warn the player whose turn it is about their own pieces.
-    const threats =
-      coachEnabled && humanTurn ? findThreatenedPieces(position.fen, position.turn) : [];
-    const shownThreats = threats.slice(0, MAX_WARNINGS);
-
-    // The hint's move, plus the squares and arrows that explain each reason.
-    const shownHint = coachEnabled ? hint : null;
-    const arrows: BoardArrow[] = shownHint
-      ? [
-          { from: shownHint.move.from, to: shownHint.move.to, kind: "move" },
-          ...shownHint.reasons.flatMap((reason) => reason.arrows),
-        ]
+    const coaching = helpMode === "coach";
+    const currentAdvice = coaching && advice?.fen === position.fen ? advice : null;
+    // The suggestion being looked at is drawn on the board: an arrow for the
+    // move, plus the squares and arrows that explain it.
+    const shown = currentAdvice && previewed ? previewed : null;
+    const arrows: BoardArrow[] = shown
+      ? [{ from: shown.move.from, to: shown.move.to, kind: "move" }, ...shown.arrows]
       : [];
 
     board.render({
@@ -222,29 +218,28 @@ export function createPlayScreen(
       selected: selection.selected,
       targets: selection.targets,
       arrows,
-      marks: shownHint ? shownHint.reasons.flatMap((reason) => reason.squares) : [],
-      warningSquares: shownThreats.map((threat) => threat.square),
+      marks: shown ? shown.squares : [],
+      warningSquares: [],
     });
     status.update(position, {
       playerColor: againstComputer ? playerColor : null,
       engineError: againstComputer && engineError,
     });
     coach.update({
-      enabled: coachEnabled,
-      canAskForHint: humanTurn && !engineError,
-      hintLoading,
-      hint,
-      warnings: shownThreats.map(describeThreat),
-      moveNotice: coachEnabled && position.status === "playing" ? lastMoveNotice(reviews) : null,
+      visible: coaching,
+      playersTurn: humanTurn,
+      loading: currentAdvice === null,
+      groups: currentAdvice ? groupByCategory(currentAdvice.candidates) : [],
     });
-    // Commenter mode needs a single player to comment on, so it is off with two humans.
+    // The Commenter needs a single player to comment on, so it is off with
+    // two humans. It also runs in Coach mode, rating the move that was picked.
     commentary.update(
-      helpMode === "commenter" && againstComputer,
+      helpMode !== "none" && againstComputer,
       reviews.map(commentOn),
       reviewer.pendingCount() > 0,
     );
     controls.update(position.history.length > 0);
-    moveList.update(position.history, reviews);
+    moveList.update(position.history, helpMode === "none" ? [] : reviews);
     const gameSummary =
       againstComputer && position.status !== "playing"
         ? summariseGame(position, reviews, playerColor)
@@ -262,12 +257,14 @@ export function createPlayScreen(
   }
 
   game.onPositionChanged((position) => {
-    hint = null;
+    // Suggestions belong to one position and are dropped when it changes.
+    previewed = null;
     // A fresh game can be rated again.
     if (position.history.length === 0) {
       gameRated = false;
       levelChange = null;
     }
+    refreshCoach();
     draw();
   });
   selector.onChange(draw);

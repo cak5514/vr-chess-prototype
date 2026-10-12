@@ -10,14 +10,15 @@ export type OpponentChoice = "adaptive" | LevelId | "friend";
 /**
  * The kind of help the player gets during a game.
  * - "commenter": nothing before the move; a rating and reasons after it
- * - "hints": a suggested move on request, and warnings about pieces in danger
+ * - "coach": a list of sound moves to choose from before the move, and
+ *   the Commenter's rating after it
  * - "none": no help at all
  */
-export type HelpMode = "commenter" | "hints" | "none";
+export type HelpMode = "commenter" | "coach" | "none";
 
 const HELP_DESCRIPTIONS: Record<HelpMode, string> = {
   commenter: "Says nothing before you move. After each move it rates the move and explains why.",
-  hints: "Suggests a move when you ask, and warns you about pieces in danger.",
+  coach: "Before you move, lists sound moves by the kind of idea. You choose. Each move is then rated.",
   none: "No help. Test what you have learned.",
 };
 
@@ -35,7 +36,7 @@ export function createGameSetup(actions: GameSetupActions, initial: OpponentChoi
   const help = document.createElement("select");
   help.append(
     new Option("Commenter", "commenter"),
-    new Option("Hints", "hints"),
+    new Option("Coach", "coach"),
     new Option("No help", "none"),
   );
   help.value = initialHelp;

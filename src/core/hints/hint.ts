@@ -36,9 +36,16 @@ export interface ArrowMark {
   kind: MarkKind;
 }
 
+/**
+ * What a reason is about, in broad terms. Coach mode uses this to sort
+ * suggested moves into categories.
+ */
+export type MovePurpose = "attack" | "defend" | "prepare-attack" | "prepare-defence";
+
 /** One reason for a move, with the squares and arrows that show it on the board. */
 export interface HintReason {
   text: string;
+  purpose: MovePurpose;
   /** The colour this reason is drawn in, or null if it has nothing to point at. */
   kind: MarkKind | null;
   squares: SquareMark[];
@@ -87,13 +94,16 @@ export async function findHint(
   return explainMove(fen, result.bestMove, { line: result.lines[0], lastMove });
 }
 
+/** A reason before its purpose has been filled in. */
+type ReasonDraft = Omit<HintReason, "purpose">;
+
 /** Builds a reason. Squares take the reason's colour; arrows carry their own. */
 function reason(
   text: string,
   kind: MarkKind | null = null,
   squares: Square[] = [],
   arrows: ArrowMark[] = [],
-): HintReason {
+): ReasonDraft {
   return { text, kind, squares: kind ? squares.map((square) => ({ square, kind })) : [], arrows };
 }
 
@@ -136,7 +146,10 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
 
   if (after.isCheckmate()) {
     hint.reasons = [
-      reason("This is checkmate! The enemy king is attacked and has no way to escape.", "attack", [enemyKing]),
+      {
+        ...reason("This is checkmate! The enemy king is attacked and has no way to escape.", "attack", [enemyKing]),
+        purpose: "attack",
+      },
     ];
     return hint;
   }
@@ -146,27 +159,32 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   const enemyThreatsBefore = findThreatenedPieces(fen, enemy);
   const enemyThreatsAfter = findThreatenedPieces(move.after, enemy);
   const reasons: HintReason[] = [];
+  // Reasons are found in groups. `purpose` says what the current group is
+  // about, and add() stamps it onto each reason as it is recorded.
+  let purpose: MovePurpose = "attack";
+  const add = (draft: ReasonDraft) => reasons.push({ ...draft, purpose });
 
   // ---------- 1. Forced wins and emergencies ----------
 
   const mateIn = context.line?.mateIn;
   if (mateIn !== undefined && mateIn > 1) {
-    reasons.push(
+    add(
       reason(`It starts a forced checkmate. Played correctly, you win in ${mateIn} moves whatever your opponent does.`),
     );
   }
 
+  purpose = "defend";
   if (before.inCheck()) {
     const checkers = before.attackers(myKing, enemyCode).map((square) => arrow(square, myKing, "danger"));
     let text = "You are in check, and this blocks the attack on your king.";
     if (piece === "king") text = "You are in check, and this moves your king to a safe square.";
     else if (move.captured) text = "You are in check, and this captures the piece attacking your king.";
-    reasons.push(reason(text, "danger", [], checkers));
+    add(reason(text, "danger", [], checkers));
   } else {
     // Would the opponent have had checkmate if we had done nothing?
     const threat = findMateInOne(passTurn(fen));
     if (threat && !findMateInOne(move.after)) {
-      reasons.push(
+      add(
         reason(`It stops checkmate. Your opponent was threatening ${moveInWords(threat)}.`, "danger", [], [
           arrow(threat.from, threat.to, "danger"),
         ]),
@@ -176,6 +194,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
 
   // ---------- 2. Winning material ----------
 
+  purpose = "attack";
   if (move.captured) {
     const captured = PIECE_NAMES[move.captured];
     const isDefended = before.attackers(move.to, enemyCode).length > 0;
@@ -193,10 +212,10 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
       const whyTrade = lead >= 2 ? " You are ahead, and each trade makes that lead count for more." : "";
       text = `It trades your ${piece} for their ${captured}, an even exchange.${whyTrade}`;
     }
-    reasons.push(reason(text, "attack", [move.to]));
+    add(reason(text, "attack", [move.to]));
   }
   if (move.promotion) {
-    reasons.push(
+    add(
       reason(`Your pawn reaches the last row and becomes a ${arrived}, your strongest possible upgrade.`, "support", [
         move.to,
       ]),
@@ -223,7 +242,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
 
   if (isFork) {
     const [first, second] = forkTargets;
-    reasons.push(
+    add(
       reason(
         `It attacks two things at once: the ${first.piece} on ${first.square} and the ${second.piece} on ${second.square}. ` +
           "Your opponent can only save one. This is called a fork.",
@@ -235,7 +254,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   } else if (after.inCheck()) {
     const movedPieceGivesCheck = forkTargets.some((target) => target.piece === "king");
     const checkers = after.attackers(enemyKing, move.color).map((square) => arrow(square, enemyKing, "attack"));
-    reasons.push(
+    add(
       reason(
         movedPieceGivesCheck
           ? "It gives check, so your opponent must deal with that before anything else."
@@ -250,7 +269,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   if (!after.inCheck()) {
     const mate = findMateInOne(passTurn(move.after));
     if (mate) {
-      reasons.push(
+      add(
         reason(`It threatens checkmate on your next move: ${moveInWords(mate)}.`, "attack", [enemyKing], [
           arrow(mate.from, mate.to, "attack"),
         ]),
@@ -267,7 +286,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
         newTarget.kind === "hanging"
           ? "which nothing defends"
           : `which is worth more than your ${newTarget.attacker}`;
-      reasons.push(
+      add(
         reason(`It attacks the ${newTarget.piece} on ${newTarget.square}, ${why}.`, "attack", [newTarget.square], [
           arrow(newTarget.attackerSquare, newTarget.square, "attack"),
         ]),
@@ -277,10 +296,11 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
 
   // ---------- 4. Keeping your own pieces safe ----------
 
+  purpose = "defend";
   const danger = myThreatsBefore.find((threat) => threat.square === move.from);
   const stillInDanger = myThreatsAfter.some((threat) => threat.square === move.to);
   if (danger && !stillInDanger) {
-    reasons.push(
+    add(
       reason(
         `Your ${piece} was attacked by the ${danger.attacker} on ${danger.attackerSquare}. This moves it to safety.`,
         "danger",
@@ -298,7 +318,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
     const target = rescued.square as ChessJsSquare;
     const oldDefenders = before.attackers(target, move.color);
     const newDefenders = after.attackers(target, move.color).filter((square) => !oldDefenders.includes(square));
-    reasons.push(
+    add(
       reason(
         `It defends your ${rescued.piece} on ${rescued.square}, which was attacked by the ${rescued.attacker} on ${rescued.attackerSquare}.`,
         "support",
@@ -314,27 +334,31 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   // ---------- 5. The engine's plan ----------
 
   const plan = describePlan(move.after, context.line, mateIn);
-  if (plan) reasons.push(plan);
+  purpose = "prepare-attack";
+  if (plan) add(plan);
 
   // ---------- 6. Positional ideas, each tied to this exact position ----------
 
+  // Castling is the one positional idea here that is about safety.
+  purpose = isCastle ? "prepare-defence" : "prepare-attack";
   if (isCastle) {
-    reasons.push(
+    add(
       reason(
         "Castling moves your king behind its pawns, away from the open centre, and brings the rook towards the middle where it can join in.",
       ),
     );
   }
 
+  purpose = "prepare-attack";
   const isOpening = before.moveNumber() <= OPENING_MOVES;
   if ((piece === "knight" || piece === "bishop") && MINOR_PIECE_HOMES.includes(move.from) && isOpening) {
-    reasons.push(describeDevelopment(before, after, move, piece));
+    add(describeDevelopment(before, after, move, piece));
   }
 
   if (piece === "pawn" && !move.captured) {
     if (CENTRE_SQUARES.includes(move.to)) {
       const controlled = attackedSquaresFrom(after, move.to);
-      reasons.push(
+      add(
         reason(
           `It puts a pawn on ${move.to}, which controls ${listInWords(controlled)} and claims space in the centre.`,
           "control",
@@ -344,7 +368,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
     }
     const opened = pieceWithNewPath(before, after, move);
     if (opened) {
-      reasons.push(
+      add(
         reason(`It opens a path for your ${opened.piece} on ${opened.square}.`, "support", [
           opened.square,
           ...opened.newSquares,
@@ -355,7 +379,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
     const rank = Number(move.to[1]);
     const isAdvanced = me === "white" ? rank >= 5 : rank <= 4;
     if (isAdvanced && isPassedPawn(after, move.to)) {
-      reasons.push(
+      add(
         reason(
           "No enemy pawn can block or capture this pawn any more. Each step brings it closer to becoming a queen.",
           "control",
@@ -369,11 +393,11 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
     const kind = fileKind(after, move.to[0], move.color);
     const alongFile = attackedSquaresFrom(after, move.to).filter((square) => square[0] === move.to[0]);
     if (kind === "open") {
-      reasons.push(
+      add(
         reason(`It puts your rook on the open ${move.to[0]}-file, where no pawns block its path.`, "control", alongFile),
       );
     } else if (kind === "half-open") {
-      reasons.push(
+      add(
         reason(
           `It puts your rook on the ${move.to[0]}-file, where none of your own pawns are in its way.`,
           "control",
@@ -385,7 +409,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
 
   const queensLeft = after.findPiece({ type: "q", color: "w" }).length + after.findPiece({ type: "q", color: "b" }).length;
   if (piece === "king" && !isCastle && !before.inCheck() && queensLeft === 0) {
-    reasons.push(
+    add(
       reason(
         "With the queens gone, your king is in far less danger and becomes a useful piece. Bring it towards the action.",
       ),
@@ -393,10 +417,13 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   }
 
   // The rest is only worth saying when nothing more specific was found.
+  // A pawn guarding squares, and a quiet move with no clear aim, both count
+  // as shoring up the position.
+  purpose = "prepare-defence";
   if (reasons.length === 0 && piece === "pawn") {
     const guarded = attackedSquaresFrom(after, move.to);
     if (guarded.length > 0) {
-      reasons.push(
+      add(
         reason(`It guards ${listInWords(guarded)}, so enemy pieces cannot settle there.`, "control", guarded),
       );
     }
@@ -405,7 +432,9 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
     const reachBefore = attackedSquaresFrom(before, move.from).length;
     const reach = attackedSquaresFrom(after, move.to);
     if (reach.length >= reachBefore + 3) {
-      reasons.push(
+      // A piece gaining scope is getting ready to do something active.
+      purpose = "prepare-attack";
+      add(
         reason(
           `From ${move.to} your ${piece} reaches ${reach.length} squares, up from ${reachBefore} where it was.`,
           "control",
@@ -416,7 +445,7 @@ export function explainMove(fen: string, choice: MoveChoice, context: HintContex
   }
 
   if (reasons.length === 0) {
-    reasons.push(
+    add(
       reason(
         "This is a quiet move that improves your position slightly. No single reason stands out, but the engine found nothing better.",
       ),
@@ -436,7 +465,7 @@ function describeAction(move: Move, piece: PieceType): string {
  * Looks at the next two moves the engine expects (the opponent's reply and
  * our follow-up) and mentions them when the follow-up wins something.
  */
-function describePlan(fenAfter: string, line: EngineLine | undefined, mateIn: number | undefined): HintReason | null {
+function describePlan(fenAfter: string, line: EngineLine | undefined, mateIn: number | undefined): ReasonDraft | null {
   // A forced mate has already been announced; the plan would repeat it.
   if (!line || line.pv.length < 3 || (mateIn !== undefined && mateIn > 0)) return null;
 
@@ -475,7 +504,7 @@ function toChessJs(move: MoveChoice) {
 }
 
 /** Explains bringing out a knight or bishop by what it does on its new square. */
-function describeDevelopment(before: Chess, after: Chess, move: Move, piece: PieceType): HintReason {
+function describeDevelopment(before: Chess, after: Chess, move: Move, piece: PieceType): ReasonDraft {
   const reach = attackedSquaresFrom(after, move.to);
   let text: string;
   let squares: Square[];

@@ -4,6 +4,8 @@
 
 export { GameReviewer } from "./analysis/gameReviewer";
 export type { MistakeTheme, MoveQuality, MoveReview } from "./analysis/moveReview";
+export { findCandidates, groupByCategory } from "./coach/candidates";
+export type { Candidate, CandidateGroup, MoveCategory } from "./coach/candidates";
 export { commentOn } from "./commenter/comment";
 export type { CommentRating, MoveComment } from "./commenter/comment";
 export { summariseGame } from "./feedback/summary";
