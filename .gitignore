@@ -10,3 +10,14 @@ dist/
 .vite/
 coverage/
 .DS_Store
+
+# Impeccable work files: mockups, review screenshots and local caches.
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/decision/
+.impeccable/hook.cache.json
+.impeccable/config.local.json
+.impeccable/questions/
+
+# Personal Claude Code settings
+.claude/settings.local.json

@@ -129,6 +129,22 @@ are built in code in `pieceModels.ts`; there are no model files. The Play
 screen loads the 3D code only when the player presses "3D board", and falls
 back to 2D if the device cannot draw it. The tutorial stays 2D.
 
+Look and feel ("The Listening Room", 2026-10-13): the design system is
+written down in `DESIGN.md`, and the product summary in `PRODUCT.md`. Read
+`DESIGN.md` before changing anything visual. In short: an aluminium plinth
+holds the board, a graphite side panel holds the text, the board is pale and
+smoked oak, and brass is the only accent. All colours and sizes are tokens at
+the top of `src/style.css`; the font is Hanken Grotesk (bundled from npm).
+- Positions on a range (opponent level, move rating, lesson progress) are
+  shown with the engraved tick scale, `ui/panels/tickScale.ts`.
+- The side panel has a scrolling part and a pinned foot (`.panel-foot`) that
+  always shows the verdict on the last move and the game buttons.
+- Pieces are drawn in code. `ui/board/pieceOutlines.ts` holds the shapes;
+  the 2D board draws them as SVG (`pieceIcon.ts`) and the 3D board spins the
+  same outlines into solids, so the two sets always match.
+- Wood and metal grain are generated (SVG noise in CSS, a canvas texture in
+  3D). There are no image files.
+
 Deployment: `vite.config.ts` uses a relative `base`, so the built site works
 from any sub-folder. `.github/workflows/deploy.yml` tests, lints, builds and
 publishes to GitHub Pages on every push to `main` (the repository's Pages

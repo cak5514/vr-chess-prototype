@@ -1,3 +1,6 @@
+// The typeface is installed with the project and served from it, so the site
+// looks the same offline.
+import "@fontsource-variable/hanken-grotesk";
 import "./style.css";
 import { TutorialProgress, UciEngine } from "./core/index";
 import { createBrowserStorage } from "./platform/browserStorage";

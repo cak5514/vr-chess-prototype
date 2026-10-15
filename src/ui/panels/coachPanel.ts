@@ -16,6 +16,8 @@ export interface CoachView {
   /** True while the engine is still working out the options. */
   loading: boolean;
   groups: CandidateGroup[];
+  /** The square of the piece selected on the board, if any. Its moves stay lit. */
+  selectedSquare: string | null;
 }
 
 // How ideas from the trained model are named on the small labels.
@@ -66,6 +68,7 @@ export function createCoachPanel(actions: CoachActions) {
         view.playersTurn,
         view.loading,
         view.groups.map((group) => group.candidates.map((item) => item.san)),
+        view.selectedSquare,
       ]);
       if (key === shown) return;
       shown = key;
@@ -87,27 +90,36 @@ export function createCoachPanel(actions: CoachActions) {
       }
 
       intro.textContent = "These are all sound moves. Pick the idea you like, or play any move of your own.";
-      body.replaceChildren(...view.groups.map(groupSection));
+      body.replaceChildren(...view.groups.map((group) => groupSection(group, view.selectedSquare)));
     },
   };
 
-  function groupSection(group: CandidateGroup): HTMLElement {
+  function groupSection(group: CandidateGroup, selectedSquare: string | null): HTMLElement {
     const section = document.createElement("div");
-    section.className = `coach-group coach-${group.category}`;
+    section.className = "coach-group";
 
+    // The category name with how many moves it holds. Its longer description
+    // is kept as a tooltip, so the list stays short.
     const heading = document.createElement("h3");
-    heading.textContent = group.label;
-    const description = document.createElement("p");
-    description.className = "coach-group-description";
-    description.textContent = group.description;
-    section.append(heading, description, ...group.candidates.map(candidateButton));
+    heading.title = group.description;
+    const name = document.createElement("span");
+    name.textContent = group.label;
+    const count = document.createElement("span");
+    count.className = "coach-group-count";
+    count.textContent = group.candidates.length === 1 ? "1 move" : `${group.candidates.length} moves`;
+    heading.append(name, count);
+
+    section.append(heading, ...group.candidates.map((item) => candidateButton(item, selectedSquare)));
     return section;
   }
 
-  function candidateButton(candidate: Candidate): HTMLElement {
+  function candidateButton(candidate: Candidate, selectedSquare: string | null): HTMLElement {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "coach-move";
+    // Moves of the piece picked up on the board stay lit. Hover alone would
+    // never show on a touch screen or in a headset.
+    button.classList.toggle("lit", candidate.move.from === selectedSquare);
 
     const name = document.createElement("strong");
     name.textContent = candidate.title;

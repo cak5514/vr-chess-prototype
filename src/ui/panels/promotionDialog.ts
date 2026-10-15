@@ -1,5 +1,5 @@
 import type { Color, PromotionPiece } from "../../core/index";
-import { PIECE_GLYPHS } from "../board/pieceGlyphs";
+import { createPieceIcon } from "../board/pieceIcon";
 
 const CHOICES: { piece: PromotionPiece; label: string }[] = [
   { piece: "queen", label: "Queen" },
@@ -31,16 +31,17 @@ export function createPromotionDialog(actions: PromotionActions) {
 
   const choices = document.createElement("div");
   choices.className = "promotion-choices";
-  const glyphs: HTMLElement[] = [];
+  // Each button holds a slot for the piece's picture, redrawn in the right colour when shown.
+  const slots: { piece: PromotionPiece; slot: HTMLElement }[] = [];
   for (const { piece, label } of CHOICES) {
     const btn = document.createElement("button");
     btn.type = "button";
-    const glyph = document.createElement("span");
-    glyph.textContent = PIECE_GLYPHS[piece];
-    glyphs.push(glyph);
+    const slot = document.createElement("span");
+    slot.className = "promotion-piece";
+    slots.push({ piece, slot });
     const text = document.createElement("span");
     text.textContent = label;
-    btn.append(glyph, text);
+    btn.append(slot, text);
     btn.addEventListener("click", () => actions.onChoose(piece));
     choices.append(btn);
   }
@@ -59,7 +60,7 @@ export function createPromotionDialog(actions: PromotionActions) {
     /** Shows the dialog for `color`, or hides it when `color` is null. */
     update(color: Color | null): void {
       element.hidden = color === null;
-      if (color) for (const glyph of glyphs) glyph.className = `piece ${color}`;
+      if (color) for (const { piece, slot } of slots) slot.replaceChildren(createPieceIcon(piece, color));
     },
   };
 }

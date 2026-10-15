@@ -7,6 +7,7 @@ import {
   GameReviewer,
   getLevel,
   groupByCategory,
+  MAX_RATING,
   MoveSelector,
   summariseGame,
 } from "../../core/index";
@@ -21,7 +22,7 @@ import type {
 import { Board2D } from "../board/board2d/board2d";
 import type { BoardArrow, BoardView } from "../board/boardView";
 import { createCoachPanel } from "../panels/coachPanel";
-import { createCommentaryPanel } from "../panels/commentaryPanel";
+import { createCommentaryPanel, createVerdict } from "../panels/commentaryPanel";
 import { createControls } from "../panels/controls";
 import { createGameSetup } from "../panels/gameSetup";
 import { createGameSummary } from "../panels/gameSummary";
@@ -29,6 +30,7 @@ import type { HelpMode, OpponentChoice } from "../panels/gameSetup";
 import { createMoveList } from "../panels/moveList";
 import { createPromotionDialog } from "../panels/promotionDialog";
 import { createStatusBar } from "../panels/statusBar";
+import { createTickScale } from "../panels/tickScale";
 
 function other(color: Color): Color {
   return color === "white" ? "black" : "white";
@@ -77,11 +79,15 @@ export function createPlayScreen(
   const screen = document.createElement("main");
   screen.className = "play-screen";
 
+  // Left: the plinth, holding the status line, the board and the level scale.
+  // Right: the panel, holding the coach, the commentary and the settings.
+  const plinth = document.createElement("div");
+  plinth.className = "plinth";
   const boardArea = document.createElement("div");
   boardArea.className = "board-area";
   const sidePanel = document.createElement("aside");
   sidePanel.className = "side-panel";
-  screen.append(boardArea, sidePanel);
+  screen.append(plinth, sidePanel);
   container.replaceChildren(screen);
 
   // What a board reports back. Both boards use the same two messages.
@@ -169,15 +175,26 @@ export function createPlayScreen(
   });
   const moveList = createMoveList();
   const summary = createGameSummary({ onPlayAgain: () => game.newGame() });
-  sidePanel.append(
-    status.element,
-    summary.element,
-    coach.element,
-    commentary.element,
-    controls.element,
-    setup.element,
-    moveList.element,
-  );
+  // The opponent's level, shown as a marker on a scale of ten under the board.
+  const level = document.createElement("p");
+  level.className = "level";
+  const levelText = document.createElement("span");
+  const levelScale = createTickScale(MAX_RATING, "scale-level", { start: "1", end: String(MAX_RATING) });
+  level.append(levelText, levelScale.element);
+
+  plinth.append(status.element, boardArea, level);
+
+  // The panel has a part that scrolls and a foot that stays put. The foot
+  // holds the verdict on the last move and the game buttons, so they are
+  // always in view however long the coach's list is.
+  const panelScroll = document.createElement("div");
+  panelScroll.className = "panel-scroll";
+  panelScroll.append(summary.element, coach.element, commentary.element, setup.element, moveList.element);
+  const panelFoot = document.createElement("div");
+  panelFoot.className = "panel-foot";
+  const verdict = createVerdict();
+  panelFoot.append(verdict.element, controls.element);
+  sidePanel.append(panelScroll, panelFoot);
 
   /** Tells the opponent and the board who controls which pieces. */
   function applySetup(): void {
@@ -260,14 +277,26 @@ export function createPlayScreen(
       playersTurn: humanTurn,
       loading: currentAdvice === null,
       groups: currentAdvice ? groupByCategory(currentAdvice.candidates) : [],
+      selectedSquare: selection.selected,
     });
     // The Commenter needs a single player to comment on, so it is off with
     // two humans. It also runs in Coach mode, rating the move that was picked.
-    commentary.update(
-      helpMode !== "none" && againstComputer,
-      reviews.map(commentOn),
-      reviewer.pendingCount() > 0,
-    );
+    const commenting = helpMode !== "none" && againstComputer;
+    const comments = reviews.map(commentOn);
+    commentary.update(commenting, comments, reviewer.pendingCount() > 0);
+    verdict.update(commenting && comments.length > 0 ? comments[comments.length - 1] : null);
+    // The three fixed levels sit at steps 2, 5 and 8 of the same ladder.
+    const fixedSteps = { beginner: 2, casual: 5, challenger: 8 };
+    level.hidden = !againstComputer;
+    if (opponentChoice === "adaptive") {
+      const rating = adaptive.getRating();
+      levelText.textContent = `Adaptive level ${rating} of ${MAX_RATING}`;
+      levelScale.update(rating - 1, `Opponent level ${rating} of ${MAX_RATING}`);
+    } else if (opponentChoice !== "friend") {
+      const step = fixedSteps[opponentChoice];
+      levelText.textContent = `${getLevel(opponentChoice).name} level`;
+      levelScale.update(step - 1, `Opponent level ${step} of ${MAX_RATING}`);
+    }
     controls.update({ canUndo: position.history.length > 0, view: boardKind, canUse3d });
     moveList.update(position.history, helpMode === "none" ? [] : reviews);
     const gameSummary =

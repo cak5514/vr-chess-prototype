@@ -1,6 +1,6 @@
 import type { Color, Square } from "../../../core/index";
 import type { BoardArrow, BoardView, BoardViewEvents, BoardViewState } from "../boardView";
-import { PIECE_GLYPHS } from "../pieceGlyphs";
+import { createPieceIcon } from "../pieceIcon";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
@@ -15,7 +15,7 @@ interface DragInfo {
   startX: number;
   startY: number;
   /** The copy of the piece that follows the pointer once dragging starts. */
-  ghost: HTMLElement | null;
+  ghost: SVGElement | null;
   /** True if the piece was already selected, so a plain click puts it down. */
   deselectOnClick: boolean;
 }
@@ -74,9 +74,7 @@ export class Board2D implements BoardView {
         }
 
         if (piece) {
-          const pieceEl = document.createElement("span");
-          pieceEl.className = `piece ${piece.color}`;
-          pieceEl.textContent = PIECE_GLYPHS[piece.type];
+          const pieceEl = createPieceIcon(piece.type, piece.color);
           // While dragging, the real piece hides and its ghost is shown instead.
           if (this.drag?.ghost && this.drag.from === square) pieceEl.classList.add("dragging");
           el.append(pieceEl);
@@ -225,13 +223,16 @@ export class Board2D implements BoardView {
     this.endDrag();
   };
 
-  private createGhost(from: Square): HTMLElement | null {
-    const original = this.root.querySelector<HTMLElement>(`[data-square="${from}"] .piece`);
+  private createGhost(from: Square): SVGElement | null {
+    const original = this.root.querySelector<SVGElement>(`[data-square="${from}"] .piece`);
     if (!original) return null;
 
-    const ghost = original.cloneNode(true) as HTMLElement;
+    // The copy lives outside the board, so it is given the piece's size in pixels.
+    const ghost = original.cloneNode(true) as SVGElement;
     ghost.classList.add("drag-ghost");
-    ghost.style.fontSize = getComputedStyle(original).fontSize;
+    const size = original.getBoundingClientRect();
+    ghost.style.width = `${size.width}px`;
+    ghost.style.height = `${size.height}px`;
     document.body.append(ghost);
     original.classList.add("dragging");
     return ghost;

@@ -1,0 +1,721 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T00:00:00Z",
+  "title": "Design System: VR Chess Academy",
+  "extensions": {
+    "colorMeta": {
+      "brass": {
+        "role": "primary",
+        "displayName": "Brass",
+        "canonical": "oklch(72.5% 0.099 80)",
+        "tonalRamp": [
+          "#130900",
+          "#342300",
+          "#5b3f06",
+          "#815c0c",
+          "#a67f39",
+          "#c9a15c",
+          "#edc47e",
+          "#feeccf"
+        ]
+      },
+      "brass-deep": {
+        "role": "primary",
+        "displayName": "Deep Brass",
+        "canonical": "oklch(46.8% 0.080 78)",
+        "tonalRamp": [
+          "#140900",
+          "#362200",
+          "#5c3f02",
+          "#7c5d29",
+          "#a1804c",
+          "#c4a26d",
+          "#e8c58f",
+          "#feecd0"
+        ]
+      },
+      "alu": {
+        "role": "neutral",
+        "displayName": "Bead-blasted Aluminium",
+        "canonical": "oklch(88.9% 0.007 116)",
+        "tonalRamp": [
+          "#0b0c08",
+          "#262723",
+          "#454541",
+          "#63645f",
+          "#868782",
+          "#a7a8a3",
+          "#cacbc6",
+          "#eeefea"
+        ]
+      },
+      "alu-hi": {
+        "role": "neutral",
+        "displayName": "Aluminium, Lit",
+        "canonical": "oklch(92.6% 0.007 116)",
+        "tonalRamp": [
+          "#0b0c08",
+          "#262723",
+          "#454541",
+          "#63645f",
+          "#868782",
+          "#a7a8a3",
+          "#cacbc6",
+          "#eeefea"
+        ]
+      },
+      "alu-lo": {
+        "role": "neutral",
+        "displayName": "Aluminium, Shaded",
+        "canonical": "oklch(84.3% 0.008 114)",
+        "tonalRamp": [
+          "#0b0c08",
+          "#262722",
+          "#454641",
+          "#63645f",
+          "#868781",
+          "#a7a8a2",
+          "#cacbc5",
+          "#eeefe9"
+        ]
+      },
+      "alu-line": {
+        "role": "neutral",
+        "displayName": "Aluminium Line",
+        "canonical": "oklch(73.8% 0.009 122)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#262722",
+          "#444641",
+          "#62645f",
+          "#858781",
+          "#a7a9a3",
+          "#c9cbc5",
+          "#edefe9"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(22.6% 0.004 264)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#252628",
+          "#444547",
+          "#626366",
+          "#858689",
+          "#a6a8aa",
+          "#c9cacd",
+          "#edeef1"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "oklch(40.5% 0.006 258)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#252729",
+          "#434548",
+          "#616366",
+          "#84868a",
+          "#a5a8ab",
+          "#c8cbce",
+          "#eceff2"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "oklch(22.6% 0.004 264)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#252628",
+          "#444547",
+          "#626366",
+          "#858689",
+          "#a6a8aa",
+          "#c9cacd",
+          "#edeef1"
+        ]
+      },
+      "graphite-raised": {
+        "role": "neutral",
+        "displayName": "Raised Graphite",
+        "canonical": "oklch(27.6% 0.006 258)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#25272a",
+          "#434548",
+          "#616367",
+          "#84868a",
+          "#a5a8ac",
+          "#c8cbcf",
+          "#eceff3"
+        ]
+      },
+      "graphite-line": {
+        "role": "neutral",
+        "displayName": "Graphite Line",
+        "canonical": "oklch(36.7% 0.006 258)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#252729",
+          "#434548",
+          "#616367",
+          "#84868a",
+          "#a5a8ab",
+          "#c8cbce",
+          "#eceff2"
+        ]
+      },
+      "pale": {
+        "role": "neutral",
+        "displayName": "Pale",
+        "canonical": "oklch(94.7% 0.007 116)",
+        "tonalRamp": [
+          "#0b0c08",
+          "#262723",
+          "#454541",
+          "#63645f",
+          "#868782",
+          "#a7a8a3",
+          "#cacbc6",
+          "#eeefea"
+        ]
+      },
+      "pale-soft": {
+        "role": "neutral",
+        "displayName": "Soft Pale",
+        "canonical": "oklch(79.2% 0.009 122)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#262723",
+          "#444641",
+          "#62645f",
+          "#858781",
+          "#a7a9a3",
+          "#c9cbc5",
+          "#edefe9"
+        ]
+      },
+      "control-line": {
+        "role": "neutral",
+        "displayName": "Control Line",
+        "canonical": "oklch(64.7% 0.008 125)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#262723",
+          "#444641",
+          "#62645f",
+          "#858782",
+          "#a6a9a3",
+          "#c9cbc6",
+          "#edefea"
+        ]
+      },
+      "control-line-on-graphite": {
+        "role": "neutral",
+        "displayName": "Control Line on Graphite",
+        "canonical": "oklch(46.0% 0.005 258)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#252729",
+          "#434548",
+          "#616366",
+          "#848689",
+          "#a6a8ab",
+          "#c8cbce",
+          "#eceff2"
+        ]
+      },
+      "tick": {
+        "role": "neutral",
+        "displayName": "Tick",
+        "canonical": "oklch(54.5% 0.008 125)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#252723",
+          "#444641",
+          "#62645f",
+          "#858782",
+          "#a6a9a3",
+          "#c9cbc6",
+          "#edefea"
+        ]
+      },
+      "tick-on-graphite": {
+        "role": "neutral",
+        "displayName": "Tick on Graphite",
+        "canonical": "oklch(58.9% 0.005 258)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#252729",
+          "#434548",
+          "#616366",
+          "#848689",
+          "#a6a8ab",
+          "#c8cbce",
+          "#eceff2"
+        ]
+      },
+      "oak-pale": {
+        "role": "neutral",
+        "displayName": "Pale Oak",
+        "canonical": "oklch(82.9% 0.053 80)",
+        "tonalRamp": [
+          "#130900",
+          "#342303",
+          "#544223",
+          "#736040",
+          "#978362",
+          "#b9a583",
+          "#ddc8a4",
+          "#feecce"
+        ]
+      },
+      "oak-smoke": {
+        "role": "neutral",
+        "displayName": "Smoked Oak",
+        "canonical": "oklch(40.4% 0.040 54)",
+        "tonalRamp": [
+          "#170600",
+          "#362113",
+          "#563f30",
+          "#765d4e",
+          "#9a8070",
+          "#bca290",
+          "#e0c4b3",
+          "#ffeadd"
+        ]
+      },
+      "piece-white": {
+        "role": "neutral",
+        "displayName": "Ivory Piece",
+        "canonical": "oklch(95.5% 0.014 89)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#29261f",
+          "#48453d",
+          "#66635a",
+          "#89867d",
+          "#aba79e",
+          "#cecac1",
+          "#f2eee4"
+        ]
+      },
+      "piece-black": {
+        "role": "neutral",
+        "displayName": "Black Piece",
+        "canonical": "oklch(24.8% 0.006 271)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#252629",
+          "#444548",
+          "#626367",
+          "#85868a",
+          "#a6a7ab",
+          "#c9cace",
+          "#edeef2"
+        ]
+      },
+      "piece-black-outline": {
+        "role": "neutral",
+        "displayName": "Black Piece Outline",
+        "canonical": "oklch(91.6% 0.022 90)",
+        "tonalRamp": [
+          "#0f0b02",
+          "#2b261a",
+          "#4a4538",
+          "#686355",
+          "#8b8677",
+          "#ada798",
+          "#d0cabb",
+          "#f4eede"
+        ]
+      },
+      "good": {
+        "role": "secondary",
+        "displayName": "Good",
+        "canonical": "oklch(80.7% 0.080 149)",
+        "tonalRamp": [
+          "#001002",
+          "#023010",
+          "#21512c",
+          "#40704a",
+          "#63946c",
+          "#84b68c",
+          "#a6daae",
+          "#cafed2"
+        ]
+      },
+      "fair": {
+        "role": "secondary",
+        "displayName": "Fair",
+        "canonical": "oklch(82.8% 0.114 91)",
+        "tonalRamp": [
+          "#110a00",
+          "#302501",
+          "#544308",
+          "#786010",
+          "#a08324",
+          "#c2a54b",
+          "#e6c86f",
+          "#feeebe"
+        ]
+      },
+      "poor": {
+        "role": "secondary",
+        "displayName": "Poor",
+        "canonical": "oklch(76.3% 0.116 60)",
+        "tonalRamp": [
+          "#170600",
+          "#3d1d00",
+          "#673701",
+          "#925001",
+          "#b87434",
+          "#dd9658",
+          "#feba82",
+          "#ffeada"
+        ]
+      },
+      "bad": {
+        "role": "secondary",
+        "displayName": "Bad",
+        "canonical": "oklch(72.4% 0.136 28)",
+        "tonalRamp": [
+          "#200000",
+          "#4e0304",
+          "#7e1a15",
+          "#a23d34",
+          "#cb6256",
+          "#f18477",
+          "#fcb7ad",
+          "#fee9e6"
+        ]
+      },
+      "good-deep": {
+        "role": "secondary",
+        "displayName": "Deep Good",
+        "canonical": "oklch(42.6% 0.090 150)",
+        "tonalRamp": [
+          "#001002",
+          "#003010",
+          "#19522a",
+          "#3a7147",
+          "#5d9569",
+          "#7fb88a",
+          "#a1dbac",
+          "#c8ffd1"
+        ]
+      },
+      "bad-deep": {
+        "role": "secondary",
+        "displayName": "Deep Bad",
+        "canonical": "oklch(46.3% 0.149 30)",
+        "tonalRamp": [
+          "#200000",
+          "#4e0301",
+          "#821007",
+          "#a7382b",
+          "#d05e4e",
+          "#f7806e",
+          "#fcb7ab",
+          "#fee9e5"
+        ]
+      },
+      "mark-control": {
+        "role": "tertiary",
+        "displayName": "Control Blue",
+        "canonical": "oklch(58.9% 0.147 252)",
+        "tonalRamp": [
+          "#000b21",
+          "#00274d",
+          "#044580",
+          "#0864b3",
+          "#3a89db",
+          "#65acfa",
+          "#a7cefb",
+          "#e4f0fe"
+        ]
+      },
+      "mark-attack": {
+        "role": "tertiary",
+        "displayName": "Attack Red",
+        "canonical": "oklch(57.0% 0.193 28)",
+        "tonalRamp": [
+          "#200000",
+          "#4f0203",
+          "#830d0e",
+          "#b81617",
+          "#e3483e",
+          "#fe7a6c",
+          "#fdb6ac",
+          "#fee9e6"
+        ]
+      },
+      "mark-danger": {
+        "role": "tertiary",
+        "displayName": "Danger Orange",
+        "canonical": "oklch(70.8% 0.152 65)",
+        "tonalRamp": [
+          "#160700",
+          "#3a1f00",
+          "#633a04",
+          "#8d5408",
+          "#ba741d",
+          "#e79126",
+          "#fcbc7c",
+          "#feebd9"
+        ]
+      },
+      "mark-support": {
+        "role": "tertiary",
+        "displayName": "Support Purple",
+        "canonical": "oklch(55.8% 0.177 303)",
+        "tonalRamp": [
+          "#130027",
+          "#36025c",
+          "#5a1b90",
+          "#7940b4",
+          "#9d65dc",
+          "#bd8bfb",
+          "#d6bdfc",
+          "#f2eaff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The status line above the board and the lesson list heading."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The newest move rating, the game result, lesson complete."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Panel section headings, the lesson title, the verdict rating."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and row titles."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Button text, secondary lines, the move list, statistics."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Spaced capitals for field labels, category names, the level line and lesson state."
+      }
+    },
+    "shadows": [
+      {
+        "name": "board-on-plinth",
+        "value": "0 26px 46px -22px rgba(27, 28, 30, 0.55)",
+        "purpose": "The 2D board standing on the aluminium plinth."
+      },
+      {
+        "name": "promotion-box",
+        "value": "0 26px 46px -22px rgba(27, 28, 30, 0.7)",
+        "purpose": "The promotion box over the dimmed board."
+      },
+      {
+        "name": "lesson-plate",
+        "value": "0 18px 30px -18px rgba(27, 28, 30, 0.6)",
+        "purpose": "The instruction plate above the lesson board."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The one easing curve, for buttons and the scale marker."
+      },
+      {
+        "name": "control-state",
+        "value": "140ms",
+        "purpose": "Button fill and border change on hover."
+      },
+      {
+        "name": "marker-slide",
+        "value": "420ms",
+        "purpose": "The lit marker sliding to its new tick."
+      },
+      {
+        "name": "piece-move-3d",
+        "value": "180ms",
+        "purpose": "A piece gliding to its square on the 3D board (set in board3d.ts)."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none",
+        "purpose": "Under prefers-reduced-motion, buttons and the scale marker change at once."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "960px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "The standard control on aluminium: outlined, near-square, 44px tall.",
+      "html": "<button class=\"ds-btn\">Undo</button>",
+      "css": ".ds-btn { min-height: 44px; padding: 0 1.1rem; border-radius: 2px; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: var(--text-small, 0.9375rem); cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid #8d8f8a; background: transparent; color: var(--ink, #1b1c1e); font-weight: 500; } .ds-btn:hover { background: var(--alu-hi, #e6e7e2); border-color: var(--ink, #1b1c1e); } .ds-btn:focus-visible { outline: 2px solid var(--brass-deep, #73541f); outline-offset: 2px; }"
+    },
+    {
+      "name": "Button on graphite",
+      "kind": "button",
+      "refersTo": "button-on-graphite",
+      "description": "The same control inside the side panel or the lesson plate, with the pale colour set.",
+      "html": "<div class=\"ds-graphite\"><button class=\"ds-btn-dark\">Flip board</button></div>",
+      "css": ".ds-graphite { padding: 16px; background: var(--graphite, #1b1c1e); } .ds-btn-dark { min-height: 44px; padding: 0 1.1rem; border-radius: 2px; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: var(--text-small, 0.9375rem); cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid #56585b; background: transparent; color: var(--pale, #edeee9); font-weight: 500; } .ds-btn-dark:hover { background: var(--graphite-raised, #26282b); border-color: var(--pale, #edeee9); } .ds-btn-dark:focus-visible { outline: 2px solid var(--brass, #c79f5a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary-on-graphite",
+      "description": "The one main action of a view (Next, Play again). Pale on graphite; ink on aluminium.",
+      "html": "<div class=\"ds-graphite-p\"><button class=\"ds-btn-primary\">Next</button></div>",
+      "css": ".ds-graphite-p { padding: 16px; background: var(--graphite, #1b1c1e); } .ds-btn-primary { min-height: 44px; padding: 0 1.1rem; border-radius: 2px; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: var(--text-small, 0.9375rem); cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--pale, #edeee9); background: var(--pale, #edeee9); color: var(--ink, #1b1c1e); font-weight: 600; } .ds-btn-primary:hover { border-color: var(--brass, #c79f5a); } .ds-btn-primary:focus-visible { outline: 2px solid var(--brass, #c79f5a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Navigation tabs",
+      "kind": "nav",
+      "refersTo": "nav-tab",
+      "description": "The top bar: product name in spaced capitals, Learn and Play tabs. The active tab is an aluminium key.",
+      "html": "<div class=\"ds-bar\"><span class=\"ds-bar-name\">VR Chess Academy</span><span class=\"ds-nav\"><button class=\"ds-tab\">Learn</button><button class=\"ds-tab ds-tab-active\">Play</button></span></div>",
+      "css": ".ds-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; padding: 10px 24px; background: var(--graphite, #1b1c1e); color: var(--pale, #edeee9); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; } .ds-bar-name { font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; } .ds-nav { display: flex; gap: 4px; } .ds-tab { min-height: 44px; padding: 0 1.1rem; border-radius: 2px; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: var(--text-small, 0.9375rem); cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1); padding: 0 1.4rem; border: 1px solid transparent; background: transparent; color: var(--pale-soft, #babcb6); font-weight: 500; } .ds-tab:hover { background: var(--graphite-raised, #26282b); border-color: var(--pale, #edeee9); } .ds-tab.ds-tab-active { background: var(--alu, #dadbd6); border-color: var(--alu, #dadbd6); color: var(--ink, #1b1c1e); font-weight: 600; } .ds-tab:focus-visible { outline: 2px solid var(--brass, #c79f5a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Select field",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "A labelled drop-down in the settings part of the panel, with a drawn chevron.",
+      "html": "<label class=\"ds-field\">Help<select class=\"ds-select\"><option>Commenter</option><option>Coach</option><option>No help</option></select></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.35rem; padding: 16px; background: var(--graphite, #1b1c1e); color: var(--pale, #edeee9); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; } .ds-select { min-height: 44px; width: 100%; padding: 0 2.4rem 0 0.9rem; border: 1px solid #56585b; border-radius: 2px; background-color: var(--graphite-raised, #26282b); background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23edeee9' stroke-width='1.6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right 0.9rem center; background-size: 0.75rem; appearance: none; color: var(--pale, #edeee9); font: inherit; font-size: 0.9375rem; font-weight: 400; letter-spacing: normal; text-transform: none; cursor: pointer; } .ds-select:focus-visible { outline: 2px solid var(--brass, #c79f5a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Coach move row",
+      "kind": "card",
+      "refersTo": "coach-move",
+      "description": "One candidate move in the Coach list. It turns pale, like a lit key, on hover, on focus, or when its piece is picked up.",
+      "html": "<div class=\"ds-coach\"><h3 class=\"ds-coach-group\">Attack <span>2 moves</span></h3><button class=\"ds-coach-move\"><strong>Knight to f3</strong><span class=\"ds-coach-reason\">It attacks the pawn on e5, which nothing defends.</span><span class=\"ds-ideas\"><span>Fork</span></span></button></div>",
+      "css": ".ds-coach { display: flex; flex-direction: column; gap: 0.5rem; padding: 16px; background: var(--graphite, #1b1c1e); color: var(--pale, #edeee9); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; } .ds-coach-group { display: flex; align-items: baseline; justify-content: space-between; margin: 0; padding-bottom: 0.35rem; border-bottom: 1px solid var(--graphite-line, #3d3f42); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; } .ds-coach-group span { color: var(--pale-soft, #babcb6); font-weight: 500; letter-spacing: 0.06em; } .ds-coach-move { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; width: 100%; padding: 14px 16px; border: 1px solid transparent; border-radius: 2px; background: var(--graphite-raised, #26282b); color: var(--pale, #edeee9); font: inherit; text-align: left; cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-coach-move strong { font-size: 1.0625rem; font-weight: 600; } .ds-coach-reason { color: var(--pale-soft, #babcb6); font-size: 0.9375rem; line-height: 1.45; } .ds-ideas { display: flex; gap: 0.4rem; margin-top: 0.3rem; } .ds-ideas span { padding: 0.1rem 0.55rem; border: 1px solid currentColor; border-radius: 2px; color: var(--brass, #c79f5a); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; } .ds-coach-move:hover, .ds-coach-move:focus-visible { background: var(--pale, #edeee9); border-color: var(--pale, #edeee9); color: var(--ink, #1b1c1e); } .ds-coach-move:hover .ds-coach-reason, .ds-coach-move:focus-visible .ds-coach-reason { color: var(--ink-soft, #47494c); } .ds-coach-move:hover .ds-ideas span, .ds-coach-move:focus-visible .ds-ideas span { color: var(--brass-deep, #73541f); } .ds-coach-move:focus-visible { outline: 2px solid var(--brass, #c79f5a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Lesson row",
+      "kind": "card",
+      "refersTo": "lesson-row",
+      "description": "One lesson in the ruled list on aluminium: a smoked-oak tile, title, summary and state.",
+      "html": "<button class=\"ds-lesson\"><span class=\"ds-lesson-icon\"></span><strong>The board</strong><span class=\"ds-lesson-summary\">Files, ranks and the name of every square.</span><span class=\"ds-lesson-state\">Done</span></button>",
+      "css": ".ds-lesson { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; grid-template-areas: 'icon title state' 'icon summary state'; align-items: center; column-gap: 1rem; width: 100%; padding: 14px 8px; border: none; border-top: 1px solid var(--alu-line, #a9aba5); background: transparent; color: var(--ink, #1b1c1e); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; text-align: left; cursor: pointer; transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-lesson:hover { background: var(--alu-hi, #e6e7e2); } .ds-lesson:focus-visible { outline: 2px solid var(--brass-deep, #73541f); outline-offset: 2px; } .ds-lesson-icon { grid-area: icon; width: 48px; height: 48px; border-radius: 2px; background: conic-gradient(var(--oak-pale, #d9c4a1) 25%, var(--oak-smoke, #5a4334) 0 50%, var(--oak-pale, #d9c4a1) 0 75%, var(--oak-smoke, #5a4334) 0); } .ds-lesson strong { grid-area: title; align-self: end; font-size: 1.0625rem; font-weight: 600; } .ds-lesson-summary { grid-area: summary; align-self: start; color: var(--ink-soft, #47494c); font-size: 0.9375rem; } .ds-lesson-state { grid-area: state; color: var(--good-deep, #245c33); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Rating scale",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "The signature form. Five ticks rising from worst to best, with a doubled marker in the rating colour. Shown at the foot of the panel after every move.",
+      "html": "<div class=\"ds-verdict\"><p class=\"ds-verdict-words\"><span>Move 4, Nf3</span><strong>Good move</strong></p><span class=\"ds-scale ds-scale-rating\" role=\"img\" aria-label=\"Rated Good move\"><span class=\"ds-scale-end\">Blunder</span><span class=\"ds-scale-ticks\"><i></i><i></i><i></i><i></i><i></i><span class=\"ds-scale-marker\"></span></span><span class=\"ds-scale-end\">Best</span></span></div>",
+      "css": ".ds-scale { display: inline-flex; align-items: flex-end; gap: 0.6rem; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; } .ds-scale-ticks { position: relative; display: flex; align-items: flex-end; gap: calc(var(--step) - 3px); height: 30px; } .ds-scale-ticks i { width: 3px; height: 14px; background: var(--tick); } .ds-scale-marker { position: absolute; left: 0; bottom: 0; width: 3px; height: 30px; background: var(--mark); transform: translateX(calc(var(--lit) * var(--step))); transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-scale-marker::after { content: ''; position: absolute; left: 6px; bottom: 0; width: 3px; height: 100%; background: inherit; } .ds-scale-end { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; line-height: 1; text-transform: uppercase; font-variant-numeric: tabular-nums; } @media (prefers-reduced-motion: reduce) { .ds-scale-marker { transition: none; } } .ds-verdict { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0.6rem 1rem; padding: 18px 24px; background: var(--graphite, #1b1c1e); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; --rating: var(--good, #9ccfa4); } .ds-verdict-words { display: flex; flex-direction: column; margin: 0; } .ds-verdict-words span { color: var(--pale-soft, #babcb6); font-size: 0.9375rem; font-variant-numeric: tabular-nums; } .ds-verdict-words strong { color: var(--rating); font-size: 1.3125rem; font-weight: 500; line-height: 1.2; } .ds-scale-rating { --step: 16px; --tick: #7b7d80; --mark: var(--rating); --lit: 3; color: var(--pale-soft, #babcb6); } .ds-scale-rating .ds-scale-ticks i:nth-of-type(1) { height: 8px; } .ds-scale-rating .ds-scale-ticks i:nth-of-type(2) { height: 12px; } .ds-scale-rating .ds-scale-ticks i:nth-of-type(3) { height: 16px; } .ds-scale-rating .ds-scale-ticks i:nth-of-type(4) { height: 20px; } .ds-scale-rating .ds-scale-ticks i:nth-of-type(5) { height: 24px; }"
+    },
+    {
+      "name": "Level scale",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "The opponent's level on a ladder of ten, on the aluminium plinth under the board. Every fifth tick is taller, as on a ruler.",
+      "html": "<p class=\"ds-level\"><span>Opponent level 3</span><span class=\"ds-scale ds-scale-level\" role=\"img\" aria-label=\"Level 3 of 10\"><span class=\"ds-scale-end\">1</span><span class=\"ds-scale-ticks\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span class=\"ds-scale-marker\"></span></span><span class=\"ds-scale-end\">10</span></span></p>",
+      "css": ".ds-scale { display: inline-flex; align-items: flex-end; gap: 0.6rem; font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; } .ds-scale-ticks { position: relative; display: flex; align-items: flex-end; gap: calc(var(--step) - 3px); height: 30px; } .ds-scale-ticks i { width: 3px; height: 14px; background: var(--tick); } .ds-scale-marker { position: absolute; left: 0; bottom: 0; width: 3px; height: 30px; background: var(--mark); transform: translateX(calc(var(--lit) * var(--step))); transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-scale-marker::after { content: ''; position: absolute; left: 6px; bottom: 0; width: 3px; height: 100%; background: inherit; } .ds-scale-end { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; line-height: 1; text-transform: uppercase; font-variant-numeric: tabular-nums; } @media (prefers-reduced-motion: reduce) { .ds-scale-marker { transition: none; } } .ds-level { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin: 0; padding: 16px 24px; background: linear-gradient(180deg, var(--alu-hi, #e6e7e2), var(--alu-lo, #cbccc6)); color: var(--ink-soft, #47494c); font-family: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; } .ds-scale-level { --step: 14px; --tick: #6f716c; --mark: var(--ink, #1b1c1e); --lit: 2; } .ds-scale-level .ds-scale-ticks i:nth-of-type(5n) { height: 20px; }"
+    },
+    {
+      "name": "Board squares",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Pale and smoked oak in a graphite frame, with generated grain. Brass tints the last move and frames the selected square.",
+      "html": "<div class=\"ds-board\"><span class=\"ds-sq ds-light\"></span><span class=\"ds-sq ds-dark ds-last\"></span><span class=\"ds-sq ds-light ds-selected\"></span><span class=\"ds-sq ds-dark\"></span><span class=\"ds-sq ds-dark\"></span><span class=\"ds-sq ds-light ds-target\"></span><span class=\"ds-sq ds-dark ds-target\"></span><span class=\"ds-sq ds-light\"></span></div>",
+      "css": ".ds-board { position: relative; display: grid; grid-template-columns: repeat(4, 56px); width: max-content; border: 10px solid var(--graphite, #1b1c1e); border-radius: 3px; box-shadow: 0 26px 46px -22px rgba(27, 28, 30, 0.55); overflow: hidden; } .ds-board::after { content: ''; position: absolute; inset: 0; background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.11' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 -1.5 1.05'/%3E%3C/filter%3E%3Crect width='480' height='480' filter='url(%23g)'/%3E%3C/svg%3E\"); opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; } .ds-sq { position: relative; display: grid; place-items: center; width: 56px; height: 56px; } .ds-light { background: var(--oak-pale, #d9c4a1); } .ds-dark { background: var(--oak-smoke, #5a4334); } .ds-last::before { content: ''; position: absolute; inset: 0; background: var(--brass, #c79f5a); opacity: 0.42; } .ds-selected { box-shadow: inset 0 0 0 3px var(--brass, #c79f5a); } .ds-target::after { content: ''; width: 26%; height: 26%; border-radius: 50%; background: var(--graphite, #1b1c1e); opacity: 0.38; } .ds-dark.ds-target::after { background: var(--pale, #edeee9); opacity: 0.5; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Listening Room",
+    "overview": "The site looks like a chess set built by a maker of high-end audio equipment. There are two grounds. A pale, bead-blasted aluminium field holds the board. A graphite panel holds the words. The board is pale oak and smoked oak in a graphite frame. One brass colour marks what is selected or live. The idea is luxury as precision: few materials, exact edges, nothing decorative.\n\nThe audience is a complete beginner, so the look never gets in the way of reading. The board is the largest thing on the screen. Text is large and high in contrast. Anything that sits on a range (the opponent's level, the rating of a move, progress through a lesson) is shown on an engraved scale of ticks with one lit marker, the way a level meter shows volume.\n\nNo image files ship. The metal grain and the 2D wood grain are SVG noise filters written inside the stylesheet. The 3D wood grain is painted on a canvas in code. The pieces are drawn from one set of outline data, as flat silhouettes in 2D and as solid models in 3D.",
+    "keyCharacteristics": [
+      "Two grounds only: aluminium (light) and graphite (dark).",
+      "One accent: brass.",
+      "One typeface: Hanken Grotesk, six sizes.",
+      "Near-square corners (2px, 3px on the board).",
+      "Sections are divided by thin rules, not placed in boxes.",
+      "The tick scale is the signature shape.",
+      "All texture and all pieces are generated in code."
+    ],
+    "rules": [
+      {
+        "name": "The One Brass Rule",
+        "body": "Brass is the only accent. It means \"this is selected, or this just happened\". Do not use it for decoration or for body text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Grounds Rule",
+        "body": "Every surface is aluminium or graphite. Buttons do not hard-code colours. They read `--control-fg`, `--control-line`, `--control-hover`, `--primary-bg`, `--primary-fg` and `--focus`, and those six values flip when the surface is graphite.",
+        "section": "colors"
+      },
+      {
+        "name": "The Same Meaning Rule",
+        "body": "A hint colour means the same thing in lessons, in comments, on the 2D board and on the 3D board. Rating colours are tuned for graphite; on aluminium use the deep versions.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Face Rule",
+        "body": "There is one typeface. Rank comes from weight, case and a rule line, not from a second font.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Is Large Rule",
+        "body": "Weight 300 is only used at Title and Display size. Anything smaller is 400 or heavier.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Move numbers, statistics and scale ends use tabular figures so columns line up.",
+        "section": "typography"
+      },
+      {
+        "name": "The Standing Object Rule",
+        "body": "A shadow means \"this object stands on the plinth\". Rows, buttons and panel sections never have one.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Generated Grain Rule",
+        "body": "Texture is made in code and ships as no image file. Metal is a 160px SVG noise tile. 2D wood is a stretched SVG noise layer over the squares at 50% opacity, multiplied. 3D wood is 48 broad wavy streaks painted on a 256px canvas with a fixed seed, so it always looks the same.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do put new surfaces on aluminium or graphite, and let buttons take their colours from the six `--control-*`, `--primary-*` and `--focus` tokens.",
+      "Do use the tick scale whenever a value sits on a range. Always give it a spoken description.",
+      "Do show a rating as a word plus its place on the scale. Colour comes third.",
+      "Do separate panel sections with a 1px rule.",
+      "Do keep every control at least 44px tall and square names at least 11px.",
+      "Do use the deep version of brass, good and bad on aluminium.",
+      "Do make texture in code (SVG noise or canvas) and draw pieces from the shared outline data.",
+      "Do turn CSS transitions off under `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "Don't add a second accent colour or a second typeface.",
+      "Don't use brass for decoration. It marks what is selected or live.",
+      "Don't give a hint colour a new meaning. Blue is control, red is attack, orange is danger, purple is support.",
+      "Don't use weight 300 below Title size.",
+      "Don't add image files for wood, metal or pieces.",
+      "Don't put a shadow on a row, a button or a panel section.",
+      "Don't round corners beyond 3px, except the move dot and capture ring."
+    ]
+  }
+}

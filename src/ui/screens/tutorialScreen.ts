@@ -1,7 +1,8 @@
 import { LESSON_GROUPS, LESSONS, LessonSession, MoveSelector } from "../../core/index";
 import type { Lesson, TutorialProgress } from "../../core/index";
 import { Board2D } from "../board/board2d/board2d";
-import { PIECE_GLYPHS } from "../board/pieceGlyphs";
+import { createPieceIcon } from "../board/pieceIcon";
+import { createTickScale } from "../panels/tickScale";
 import { createPromotionDialog } from "../panels/promotionDialog";
 
 export interface TutorialActions {
@@ -72,8 +73,7 @@ export function createTutorialScreen(
       icon.className = "lesson-icon";
       // The board lesson has no piece, so it shows a small picture of squares.
       if (lesson.piece) {
-        icon.classList.add("piece", "white");
-        icon.textContent = PIECE_GLYPHS[lesson.piece];
+        icon.append(createPieceIcon(lesson.piece, "white"));
       } else {
         icon.classList.add("lesson-icon-board");
       }
@@ -85,7 +85,7 @@ export function createTutorialScreen(
       summary.textContent = lesson.summary;
       const state = document.createElement("span");
       state.className = "lesson-state";
-      state.textContent = done ? "✓ Complete" : "Start";
+      state.textContent = done ? "Complete" : "Start";
 
       card.append(icon, title, summary, state);
       card.addEventListener("click", () => openLesson(lesson));
@@ -128,6 +128,9 @@ export function createTutorialScreen(
     });
     boardArea.append(promotion.element);
 
+    // Made once per lesson, so its marker slides from step to step.
+    const progressScale = createTickScale(lesson.steps.length, "scale-progress");
+
     function draw(): void {
       const view = session.getView();
       const selection = selector.getState();
@@ -155,16 +158,19 @@ export function createTutorialScreen(
       // Top row: where we are, and the way out.
       const top = document.createElement("div");
       top.className = "lesson-top";
-      const lessonTitle = document.createElement("p");
-      lessonTitle.className = "lesson-kicker";
-      lessonTitle.textContent = `${lesson.title} · Step ${view.stepNumber} of ${view.stepCount}`;
+      const lessonTitle = document.createElement("h2");
+      lessonTitle.className = "lesson-title";
+      lessonTitle.textContent = lesson.title;
       top.append(lessonTitle, button("All lessons", "link-button", showList));
 
-      const progressBar = document.createElement("div");
-      progressBar.className = "lesson-progress";
-      const fill = document.createElement("div");
-      fill.style.width = `${((view.stepNumber - 1) / view.stepCount) * 100}%`;
-      progressBar.append(fill);
+      // One tick per step, with the marker on the step being read.
+      progressScale.update(view.stepNumber - 1, `Step ${view.stepNumber} of ${view.stepCount}`);
+      // The step count sits beside the scale as its label.
+      const progressBar = document.createElement("p");
+      progressBar.className = "lesson-step-count";
+      const stepWords = document.createElement("span");
+      stepWords.textContent = `Step ${view.stepNumber} of ${view.stepCount}`;
+      progressBar.append(stepWords, progressScale.element);
 
       const text = document.createElement("p");
       text.className = "lesson-text";

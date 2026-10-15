@@ -1,28 +1,104 @@
-:root {
-  --page: #f4f1ea;
-  --panel: #ffffff;
-  --ink: #1f2430;
-  --ink-soft: #5a6072;
-  --line: #ddd6c8;
-  --accent: #2f6f4f;
-  --accent-ink: #ffffff;
-  --danger: #c0392b;
-  --warning: #d9730d;
+/*
+  VR Chess Academy: "The Listening Room".
 
-  /* Hint colours: the same colour is used on the board and beside the reason. */
+  The look is borrowed from high-end audio equipment: a pale bead-blasted
+  aluminium field, a graphite panel, a board in smoked and pale oak, and one
+  brass line for whatever is selected or live. Positions on a range (the
+  opponent's level, a move's rating, progress through a lesson) are shown on
+  an engraved scale of ticks with one lit marker.
+
+  One typeface, a short set of sizes. Rank comes from weight, case and rules.
+*/
+
+:root {
+  /* Aluminium: the light ground. */
+  --alu: #dadbd6;
+  --alu-hi: #e6e7e2;
+  --alu-lo: #cbccc6;
+  --alu-line: #a9aba5;
+  /* Ink: text on aluminium. */
+  --ink: #1b1c1e;
+  --ink-soft: #47494c;
+
+  /* Graphite: the dark panel and bar. */
+  --graphite: #1b1c1e;
+  --graphite-raised: #26282b;
+  --graphite-line: #3d3f42;
+  /* Pale: text on graphite. */
+  --pale: #edeee9;
+  --pale-soft: #babcb6;
+
+  /* Brass: the single accent. A deeper shade is used on the light ground. */
+  --brass: #c79f5a;
+  --brass-deep: #73541f;
+
+  /* The board. */
+  --oak-pale: #d9c4a1;
+  --oak-smoke: #5a4334;
+
+  /* Move ratings and categories, tuned to read on graphite. */
+  --good: #9ccfa4;
+  --fair: #e2c46b;
+  --poor: #e8a062;
+  --bad: #ef8275;
+  --cool: #86b7e8;
+  --rare: #c3a4e6;
+  /* The same meanings on the light ground. */
+  --bad-deep: #9b2c20;
+  --good-deep: #245c33;
+
+  /* Hint colours on the board: the same meaning in lessons and comments. */
   --mark-control: #2f7fd1;
   --mark-attack: #d1362f;
   --mark-danger: #e08a1a;
   --mark-support: #8a52c7;
 
-  --square-light: #ecdcc0;
-  --square-dark: #a97b55;
-  --square-selected: #f2d34c;
-  --square-last-move: rgba(242, 211, 76, 0.45);
+  /* Type scale. */
+  --text-label: 0.8125rem; /* 13px: spaced capitals */
+  --text-small: 0.9375rem; /* 15px */
+  --text-body: 1.0625rem; /* 17px */
+  --text-lead: 1.3125rem; /* 21px */
+  --text-title: 1.75rem; /* 28px */
+  --text-display: 2.125rem; /* 34px */
 
-  font-family: system-ui, "Segoe UI", sans-serif;
+  /* Buttons take their colours from these, so they adapt to light and dark grounds. */
+  --control-fg: var(--ink);
+  --control-line: #8d8f8a;
+  --control-hover: var(--alu-hi);
+  --primary-bg: var(--ink);
+  --primary-fg: var(--pale);
+  --focus: var(--brass-deep);
+
+  /* The fine grain of bead-blasted metal, as a small repeating noise tile. */
+  --bead-blast: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.11 0 0 0 -0.9 0.5'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --bar-height: 64px;
+
+  font-family: "Hanken Grotesk Variable", "Hanken Grotesk", system-ui, sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
   color: var(--ink);
-  background: var(--page);
+  background: var(--alu);
+  -webkit-font-smoothing: antialiased;
+  scrollbar-color: var(--alu-line) transparent;
+  scrollbar-width: thin;
+}
+
+/* On graphite, text and controls switch to the pale set. */
+.app-header,
+.side-panel,
+.lesson-bubble,
+.lesson-finished {
+  --control-fg: var(--pale);
+  --control-line: #56585b;
+  --control-hover: var(--graphite-raised);
+  --primary-bg: var(--pale);
+  --primary-fg: var(--ink);
+  --focus: var(--brass);
+  color: var(--pale);
+  background: var(--graphite);
+  scrollbar-color: #56585b transparent;
 }
 
 * {
@@ -31,323 +107,355 @@
 
 body {
   margin: 0;
+  font-size: var(--text-body);
+  background-image: var(--bead-blast);
 }
 
 h1,
 h2,
-p {
+h3,
+p,
+ol,
+ul,
+dl,
+dd {
   margin: 0;
 }
 
-.app-header {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--line);
-  background: var(--panel);
-}
-
-.app-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1rem;
-}
-
-.app-header h1 {
-  font-size: 1.25rem;
-}
-
-.app-nav {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.app-nav button.active {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--accent-ink);
+ol,
+ul {
+  padding: 0;
+  list-style: none;
 }
 
 [hidden] {
   display: none !important;
 }
 
-/* ---------- Tutorial: lesson list ---------- */
-
-.lesson-list {
-  max-width: 60rem;
-  margin: 0 auto;
-  padding: 1.5rem 1rem;
+::selection {
+  background: var(--brass);
+  color: var(--ink);
 }
 
-.lesson-list h2 {
-  font-size: 1.4rem;
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
-.lesson-list-intro {
-  margin-top: 0.3rem;
-  color: var(--ink-soft);
+/* ---------- Controls ---------- */
+
+button,
+select {
+  font: inherit;
+  color: var(--control-fg);
 }
 
-.lesson-section {
-  margin-top: 1.6rem;
+button {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--control-line);
+  border-radius: 2px;
+  background: transparent;
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), border-color 140ms var(--ease-out);
 }
 
-.lesson-section h3 {
-  margin: 0;
-  font-size: 1.1rem;
+button:hover:not(:disabled) {
+  background: var(--control-hover);
+  border-color: var(--control-fg);
 }
 
-.lesson-section-description {
-  margin-top: 0.15rem;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.lesson-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
-  gap: 0.9rem;
-  margin-top: 0.7rem;
+button.primary {
+  border-color: var(--primary-bg);
+  background: var(--primary-bg);
+  color: var(--primary-fg);
+  font-weight: 600;
 }
 
-.lesson-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.3rem;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: left;
+button.primary:hover:not(:disabled) {
+  background: var(--primary-bg);
+  border-color: var(--focus);
 }
 
-.lesson-card.lesson-done {
-  border-color: var(--accent);
-  background: #eef6f1;
+.link-button {
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  color: var(--control-fg);
+  font-size: var(--text-small);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
-.lesson-icon {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  margin-bottom: 0.2rem;
-  border-radius: 8px;
-  background: var(--square-dark);
+.link-button:hover:not(:disabled) {
+  background: transparent;
+  text-decoration-thickness: 2px;
+}
+
+select {
+  min-height: 44px;
+  width: 100%;
+  padding: 0 2.4rem 0 0.9rem;
+  border: 1px solid var(--control-line);
+  border-radius: 2px;
+  background-color: var(--graphite-raised);
+  /* A small drawn chevron in place of the browser's own arrow. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23edeee9' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 0.75rem;
+  appearance: none;
+  font-size: var(--text-small);
   cursor: pointer;
 }
 
-/* Board pieces size themselves from the board; here the size is fixed. */
-.lesson-icon.piece {
-  font-size: 2.2rem;
+select option {
+  background: var(--graphite-raised);
+  color: var(--pale);
 }
 
-/* A tiny four-square checkerboard for the board lesson. */
-.lesson-icon-board {
-  background: conic-gradient(
-    var(--square-light) 25%,
-    var(--square-dark) 0 50%,
-    var(--square-light) 0 75%,
-    var(--square-dark) 0
-  );
+/* ---------- The engraved scale ---------- */
+
+.scale {
+  --step: 14px;
+  --tick: #6f716c;
+  --mark: var(--ink);
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  flex: none;
 }
 
-.lesson-summary {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-.lesson-state {
-  margin-top: 0.3rem;
-  color: var(--accent);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.lesson-finished {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.8rem;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  background: #eef6f1;
-}
-
-/* ---------- Tutorial: inside a lesson ---------- */
-
-.lesson-screen {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-}
-
-/* One column: the speech bubble, then the board, both the same width. */
-.lesson-column {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  /* Leaves room for the header and the bubble so the board still fits on screen. */
-  width: min(100%, max(20rem, calc(100vh - 17rem)), 640px);
-}
-
-.lesson-column .board-area {
-  width: 100%;
-}
-
-.lesson-bubble {
+.scale-ticks {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  /* Tall enough for most steps, so the board does not jump between them. */
-  min-height: 9.5rem;
-  padding: 0.8rem 1rem;
-  border: 2px solid var(--accent);
-  border-radius: 12px;
-  background: var(--panel);
-  box-shadow: 0 3px 10px rgba(31, 36, 48, 0.12);
+  align-items: flex-end;
+  gap: calc(var(--step) - 3px);
+  height: 30px;
 }
 
-/* The little pointer that makes the box a speech bubble aimed at the board. */
-.lesson-bubble::after {
+.scale-ticks i {
+  width: 3px;
+  height: 14px;
+  background: var(--tick);
+}
+
+/* Every fifth tick is taller, as on a ruler. */
+.scale-ticks i:nth-of-type(5n) {
+  height: 20px;
+}
+
+/* The lit marker: taller than any tick, and doubled so it reads without colour. */
+.scale-marker {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  height: 30px;
+  background: var(--mark);
+  transform: translateX(calc(var(--lit, 0) * var(--step)));
+  transition: transform 420ms var(--ease-out);
+}
+
+.scale-marker::after {
   content: "";
   position: absolute;
-  bottom: -0.55rem;
-  left: 50%;
-  width: 1rem;
-  height: 1rem;
-  border-right: 2px solid var(--accent);
-  border-bottom: 2px solid var(--accent);
-  background: var(--panel);
-  transform: translateX(-50%) rotate(45deg);
+  left: 6px;
+  bottom: 0;
+  width: 3px;
+  height: 100%;
+  background: inherit;
 }
 
-.lesson-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
+/* The words engraved at each end of a scale. */
+.scale-end {
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
-.lesson-top .link-button {
-  padding: 0;
-  font-size: 0.85rem;
+/* On the rating scale the ticks rise from worst to best. */
+.scale-rating {
+  --step: 16px;
+  --tick: #7b7d80;
+  --mark: var(--rating, var(--pale));
+  color: var(--pale-soft);
 }
 
-.lesson-buttons {
+.scale-rating .scale-ticks i:nth-of-type(1) { height: 8px; }
+.scale-rating .scale-ticks i:nth-of-type(2) { height: 12px; }
+.scale-rating .scale-ticks i:nth-of-type(3) { height: 16px; }
+.scale-rating .scale-ticks i:nth-of-type(4) { height: 20px; }
+.scale-rating .scale-ticks i:nth-of-type(5) { height: 24px; }
+
+.scale-progress {
+  --step: 16px;
+  --tick: #7b7d80;
+  --mark: var(--brass);
+}
+
+/* ---------- Top bar ---------- */
+
+.app-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  /* Pushes the buttons to the bottom of the bubble. */
-  margin-top: auto;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: var(--bar-height);
+  padding: 10px 40px;
 }
 
-/* The middle of the button row stretches, sending Next to the right edge. */
-.lesson-buttons .lesson-moves {
-  flex: 1;
-  text-align: center;
+.app-header h1 {
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-.lesson-kicker {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
+.app-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.app-nav button {
+  padding: 0 1.4rem;
+  border-color: transparent;
+  color: var(--pale-soft);
+}
+
+.app-nav button.active {
+  background: var(--alu);
+  border-color: var(--alu);
+  color: var(--ink);
   font-weight: 600;
 }
 
-.lesson-progress {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--line);
-  overflow: hidden;
-}
-
-.lesson-progress div {
-  height: 100%;
-  background: var(--accent);
-}
-
-.lesson-text {
-  font-size: 1.02rem;
-  line-height: 1.5;
-}
-
-.lesson-moves {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.lesson-feedback {
-  padding: 0.6rem 0.7rem;
-  border-radius: 4px;
-  font-size: 0.95rem;
-}
-
-.feedback-success {
-  border-left: 4px solid var(--accent);
-  background: #eef6f1;
-}
-
-.feedback-retry {
-  border-left: 4px solid var(--warning);
-  background: #fdf1e3;
-}
-
-.lesson-complete h2 {
-  font-size: 1.3rem;
-  color: var(--accent);
-}
-
-/* ---------- Play screen layout ---------- */
+/* ---------- Play screen ---------- */
 
 .play-screen {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 1.5rem 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 468px;
+  /* Fills the window under the bar; the panel scrolls, the board stays put. */
+  height: calc(100vh - var(--bar-height));
 }
 
-.board-area {
-  position: relative;
-  /* As big as fits: limited by both the window's width and its height. */
-  width: min(100%, calc(100vh - 7rem), 640px);
-}
-
-.side-panel {
+.plinth {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: min(100%, 20rem);
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-width: 0;
+  padding: 24px 40px;
+  /* Bead-blasted aluminium: a very fine grain over a soft top-to-bottom shade. */
+  background:
+    var(--bead-blast),
+    linear-gradient(180deg, var(--alu-hi) 0%, var(--alu-lo) 100%);
+}
+
+/* The status line, board and level scale share one width. */
+.plinth > * {
+  width: min(100%, calc(100vh - var(--bar-height) - 200px), 640px);
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1.1rem;
+}
+
+.status-headline {
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.15;
+}
+
+.status-detail {
+  color: var(--ink-soft);
+  font-size: var(--text-small);
+}
+
+.status-detail:empty {
+  display: none;
+}
+
+.status-check .status-headline,
+.status-error .status-headline {
+  color: var(--bad-deep);
+  font-weight: 500;
+}
+
+.status-over .status-headline {
+  font-weight: 500;
+}
+
+.level {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 /* ---------- Board ---------- */
+
+.board-area {
+  position: relative;
+}
 
 .board {
   position: relative;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   aspect-ratio: 1;
-  border: 4px solid #6b4a2f;
-  border-radius: 6px;
+  border: 10px solid var(--graphite);
+  border-radius: 3px;
+  box-shadow: 0 26px 46px -22px rgba(27, 28, 30, 0.55);
   overflow: hidden;
   user-select: none;
   /* Lets a finger drag a piece instead of scrolling the page. */
   touch-action: none;
-  /* Lets sizes inside the board be a percentage of its width (cqw units). */
+  /* Lets sizes inside the board be a share of its width (cqw units). */
   container-type: inline-size;
+}
+
+/* Wood grain, drawn by an SVG noise filter stretched along one direction and
+   laid over the squares. It sits under the pieces and stays faint, so the
+   pieces and square names remain easy to read. */
+.board::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.11' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 -1.5 1.05'/%3E%3C/filter%3E%3Crect width='480' height='480' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 480px 480px;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 /* The 3D board: a square canvas the same size as the flat board. */
 .board3d {
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: 3px;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 35%, #e9e2d3 0%, #cfc5b1 100%);
+  /* No background of its own: the 3D board stands directly on the plinth. */
   /* Lets a finger turn the board instead of scrolling the page. */
   touch-action: none;
   cursor: grab;
@@ -365,45 +473,53 @@ p {
 }
 
 .square.light {
-  background: var(--square-light);
+  background: var(--oak-pale);
 }
 
 .square.dark {
-  background: var(--square-dark);
+  background: var(--oak-smoke);
 }
 
+/* Brass marks the last move, and more strongly the selected piece. */
 .square.last-move::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--square-last-move);
+  background: var(--brass);
+  opacity: 0.42;
 }
 
 .square.selected {
-  background: var(--square-selected);
+  box-shadow: inset 0 0 0 0.7cqw var(--brass);
 }
 
 .square.in-check {
-  background: radial-gradient(circle, #ff6b5a 0%, var(--danger) 55%, transparent 80%);
+  box-shadow: inset 0 0 0 0.9cqw var(--mark-attack);
 }
 
 /* A dot on empty squares the piece can move to. */
 .square.target::after {
   content: "";
   position: absolute;
-  width: 30%;
-  height: 30%;
+  width: 26%;
+  height: 26%;
   border-radius: 50%;
-  background: rgba(31, 36, 48, 0.3);
+  background: var(--graphite);
+  opacity: 0.38;
+}
+
+.square.dark.target::after {
+  background: var(--pale);
+  opacity: 0.5;
 }
 
 /* A ring around enemy pieces it can capture. */
 .square.target-capture::after {
   content: "";
   position: absolute;
-  inset: 4%;
+  inset: 5%;
   border-radius: 50%;
-  border: 0.7cqw solid rgba(192, 57, 43, 0.75);
+  border: 0.7cqw solid var(--mark-attack);
 }
 
 .square.target,
@@ -411,50 +527,46 @@ p {
   cursor: pointer;
 }
 
-/* An orange frame and "!" badge on a piece that is in danger. */
-.square.warning {
-  box-shadow: inset 0 0 0 0.6cqw var(--warning);
-}
-
-.square.warning::before {
-  content: "!";
-  position: absolute;
-  top: 4%;
-  right: 4%;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 3.4cqw;
-  height: 3.4cqw;
-  border-radius: 50%;
-  background: var(--warning);
-  color: #fff;
-  font-size: 2.6cqw;
-  font-weight: 700;
-}
-
-/* A colour wash over a square that a hint is talking about. */
+/* A frame, with a light tint, on a square that a hint or a lesson is talking
+   about. The wood stays visible underneath. */
 .square-mark {
   position: absolute;
   inset: 0;
-  opacity: 0.5;
+  box-shadow: inset 0 0 0 0.9cqw currentColor;
+  background: color-mix(in srgb, currentColor 26%, transparent);
   pointer-events: none;
 }
 
-.mark-control {
-  background: var(--mark-control);
+.mark-control { color: var(--mark-control); }
+.mark-attack { color: var(--mark-attack); }
+.mark-danger { color: var(--mark-danger); }
+.mark-support { color: var(--mark-support); }
+
+.coord {
+  position: absolute;
+  /* This app teaches square names, so they never shrink below 11px. */
+  font-size: max(11px, 2.3cqw);
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
 }
 
-.mark-attack {
-  background: var(--mark-attack);
+.rank-label {
+  top: 5%;
+  left: 6%;
 }
 
-.mark-danger {
-  background: var(--mark-danger);
+.file-label {
+  bottom: 5%;
+  right: 7%;
 }
 
-.mark-support {
-  background: var(--mark-support);
+.square.light .coord {
+  color: var(--oak-smoke);
+}
+
+.square.dark .coord {
+  color: var(--oak-pale);
 }
 
 .arrow-layer {
@@ -467,79 +579,41 @@ p {
 }
 
 .arrow-layer polygon {
-  fill-opacity: 0.85;
-  stroke: #fff;
-  stroke-opacity: 0.85;
+  fill-opacity: 0.9;
+  stroke: var(--pale);
+  stroke-opacity: 0.9;
   stroke-width: 0.04;
   stroke-linejoin: round;
 }
 
-.arrow-move {
-  fill: var(--accent);
-}
+.arrow-move { fill: var(--brass); }
+.arrow-control { fill: var(--mark-control); }
+.arrow-attack { fill: var(--mark-attack); }
+.arrow-danger { fill: var(--mark-danger); }
+.arrow-support { fill: var(--mark-support); }
 
-.arrow-control {
-  fill: var(--mark-control);
-}
-
-.arrow-attack {
-  fill: var(--mark-attack);
-}
-
-.arrow-danger {
-  fill: var(--mark-danger);
-}
-
-.arrow-support {
-  fill: var(--mark-support);
-}
-
-.coord {
-  position: absolute;
-  font-size: 2.4cqw;
-  font-weight: 600;
-  pointer-events: none;
-}
-
-.rank-label {
-  top: 3%;
-  left: 5%;
-}
-
-.file-label {
-  bottom: 2%;
-  right: 6%;
-}
-
-.square.light .coord {
-  color: var(--square-dark);
-}
-
-.square.dark .coord {
-  color: var(--square-light);
-}
-
-/* ---------- Pieces ---------- */
+/* ---------- Pieces: drawn silhouettes ---------- */
 
 .piece {
   position: relative;
   z-index: 1;
-  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", sans-serif;
-  font-size: 9.5cqw;
-  line-height: 1;
+  display: block;
+  width: 92%;
+  height: 92%;
+  stroke-linejoin: round;
   cursor: grab;
-  /* Draw the outline behind the fill so it does not thin the shape. */
-  paint-order: stroke fill;
 }
 
 .piece.white {
-  color: #fdfbf5;
-  -webkit-text-stroke: 0.14em #2a2622;
+  fill: #f4f0e6;
+  stroke: var(--graphite);
+  stroke-width: 2.2;
 }
 
 .piece.black {
-  color: #2a2622;
-  -webkit-text-stroke: 0.06em #f1e9da;
+  fill: #202124;
+  stroke: #e9e3d3;
+  stroke-width: 2.2;
 }
 
 .piece.dragging {
@@ -551,317 +625,380 @@ p {
   z-index: 100;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  cursor: grabbing;
 }
 
 /* ---------- Side panel ---------- */
 
-.status,
-.move-list {
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
+/* The panel has a part that scrolls and a foot that always stays in view. */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.status-headline {
-  font-size: 1.15rem;
-  font-weight: 600;
+.panel-scroll {
+  flex: 1;
+  min-height: 0;
+  padding: 8px 36px 8px;
+  overflow-y: auto;
 }
 
-.status-detail {
-  margin-top: 0.25rem;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+/* Sections are separated by a rule, not boxed. */
+.panel-scroll > * {
+  padding: 24px 0;
 }
 
-.status-detail:empty {
-  display: none;
+/* Every visible section after the first visible one gets a rule above it. */
+.panel-scroll > :not([hidden]) ~ * {
+  border-top: 1px solid var(--graphite-line);
 }
 
-.status-check {
-  border-color: var(--danger);
+.side-panel h2 {
+  font-size: var(--text-lead);
+  font-weight: 500;
+  line-height: 1.25;
 }
 
-.status-check .status-headline {
-  color: var(--danger);
+.panel-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 36px 24px;
+  border-top: 1px solid var(--graphite-line);
+  background: var(--graphite);
 }
 
-.status-over {
-  border-color: var(--accent);
-  background: #eef6f1;
+/* The verdict on the last move, with its place on the rating scale. */
+.verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
 }
 
-.status-error {
-  border-color: var(--danger);
+.verdict-words {
+  display: flex;
+  flex-direction: column;
+}
+
+.verdict-move {
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.verdict strong {
+  color: var(--rating);
+  font-size: var(--text-lead);
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 /* ---------- Coach ---------- */
 
-.coach {
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
-}
-
-.coach h2 {
-  font-size: 1rem;
-}
-
 .coach-intro {
-  margin-top: 0.3rem;
-  color: var(--ink-soft);
-  font-size: 0.88rem;
+  margin-top: 0.4rem;
+  max-width: 34em;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
 }
 
 .coach-body {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 0.7rem;
-  max-height: 26rem;
-  overflow-y: auto;
+  gap: 1.4rem;
+  margin-top: 1.2rem;
 }
 
 .coach-body:empty {
   display: none;
 }
 
-/* Each category has its own colour, set once here and reused below. */
 .coach-group {
-  --category: var(--ink-soft);
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
-.coach-attack {
-  --category: #c0392b;
-}
-
-.coach-defend {
-  --category: #1f6fb5;
-}
-
-.coach-prepare-attack {
-  --category: #b85a00;
-}
-
-.coach-prepare-defence {
-  --category: #2f6f4f;
-}
-
-.coach-trap {
-  --category: #6b4ea0;
-}
-
-.coach-sacrifice {
-  --category: #a02c6e;
-}
-
+/* The category name in spaced capitals, with how many moves it holds. */
 .coach-group h3 {
-  margin: 0;
-  color: var(--category);
-  font-size: 0.95rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--graphite-line);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.coach-group-description {
-  color: var(--ink-soft);
-  font-size: 0.8rem;
+.coach-group-count {
+  color: var(--pale-soft);
+  font-weight: 500;
+  letter-spacing: 0.06em;
 }
 
 .coach-move {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.2rem;
   width: 100%;
-  padding: 0.5rem 0.6rem;
-  border-color: var(--line);
+  min-height: 0;
+  padding: 14px 16px;
+  border-color: transparent;
+  background: var(--graphite-raised);
+  font-weight: 400;
   text-align: left;
 }
 
-.coach-move:hover:not(:disabled),
-.coach-move:focus-visible {
-  border-color: var(--category);
-  background: #faf8f3;
-}
-
-.coach-move-reason {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
-}
-
-.coach-move-ideas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-top: 0.15rem;
-}
-
-.coach-move-ideas span {
-  padding: 0.05rem 0.45rem;
-  border-radius: 999px;
-  background: var(--category);
-  color: #fff;
-  font-size: 0.75rem;
+.coach-move strong {
+  font-size: var(--text-body);
   font-weight: 600;
 }
 
-/* ---------- Commentary (Commenter mode) ---------- */
-
-.commentary {
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
+.coach-move-reason {
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+  line-height: 1.45;
 }
 
-.commentary h2 {
-  font-size: 1rem;
-  margin-bottom: 0.6rem;
+/* A row turns pale, like a lit key, when it is looked at or when its piece
+   is the one picked up on the board. */
+.coach-move.lit,
+.coach-move:hover:not(:disabled),
+.coach-move:focus-visible {
+  background: var(--pale);
+  border-color: var(--pale);
+  color: var(--ink);
 }
+
+.coach-move.lit .coach-move-reason,
+.coach-move:hover .coach-move-reason,
+.coach-move:focus-visible .coach-move-reason {
+  color: var(--ink-soft);
+}
+
+.coach-move-ideas,
+.comment-ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.coach-move-ideas span,
+.comment-ideas span {
+  padding: 0.1rem 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  color: var(--brass);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coach-move.lit .coach-move-ideas span,
+.coach-move:hover .coach-move-ideas span,
+.coach-move:focus-visible .coach-move-ideas span {
+  color: var(--brass-deep);
+}
+
+/* ---------- Commentary ---------- */
 
 .commentary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.commentary-empty,
+.commentary-waiting {
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+}
+
+/* Each rating has its own colour, set once here and reused below. */
+.comment { --rating: var(--pale); }
+.comment-sacrifice { --rating: var(--brass); }
+.comment-best { --rating: var(--good); }
+.comment-good { --rating: var(--good); }
+.comment-inaccuracy { --rating: var(--fair); }
+.comment-mistake { --rating: var(--poor); }
+.comment-blunder { --rating: var(--bad); }
+
+.comment-newest {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
 }
 
-.commentary-empty,
-.commentary-waiting {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+.comment-newest .comment-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.comment-move {
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.comment-newest .comment-rating {
+  color: var(--rating);
+  font-size: var(--text-title);
+  font-weight: 300;
+  line-height: 1.15;
+}
+
+.comment-text {
+  max-width: 34em;
+  font-size: 1rem;
 }
 
 .commentary-earlier {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  max-height: 14rem;
+  max-height: 15rem;
   overflow-y: auto;
 }
 
-/* Each rating has its own colour, set once here and reused below. */
-.comment {
-  --rating: var(--ink-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 0.88rem;
+.commentary-earlier .comment {
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--graphite-line);
 }
 
-.comment-sacrifice {
-  --rating: #7a3fc0;
-}
-
-.comment-best {
-  --rating: #1e7a4c;
-}
-
-.comment-good {
-  --rating: #3d7f5f;
-}
-
-.comment-inaccuracy {
-  --rating: #8a6500;
-}
-
-.comment-mistake {
-  --rating: #b85a00;
-}
-
-.comment-blunder {
-  --rating: var(--danger);
-}
-
-.comment-newest {
-  border: 2px solid var(--rating);
-  font-size: 0.95rem;
-}
-
-.comment-head {
+.commentary-earlier .comment-head {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 0.6rem;
+  gap: 1rem;
 }
 
-.comment-move {
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-.comment-rating {
+.commentary-earlier .comment-rating {
   color: var(--rating);
-}
-
-.comment-ideas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.comment-ideas span {
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
-  background: var(--rating);
-  color: #fff;
-  font-size: 0.78rem;
+  font-size: var(--text-small);
   font-weight: 600;
 }
 
-/* ---------- Post-game summary ---------- */
+.commentary-earlier .comment-text {
+  margin-top: 0.15rem;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+}
+
+/* ---------- Controls, settings, move list ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.game-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.field:first-child {
+  margin-top: 0;
+}
+
+.field select {
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.setup-description {
+  max-width: 34em;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+}
+
+.move-list-empty {
+  margin-top: 0.5rem;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+}
+
+.move-list ol {
+  max-height: 14rem;
+  margin-top: 0.6rem;
+  overflow-y: auto;
+}
+
+.move-list li {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr 1fr;
+  padding: 0.3rem 0;
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.move-number {
+  color: var(--pale-soft);
+}
+
+.move-inaccuracy { color: var(--fair); }
+.move-mistake { color: var(--poor); font-weight: 600; }
+.move-blunder { color: var(--bad); font-weight: 600; }
+
+/* ---------- Game summary ---------- */
 
 .summary {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.9rem 1rem;
-  border: 2px solid var(--accent);
-  border-radius: 8px;
-  background: var(--panel);
-}
-
-.summary h2 {
-  font-size: 1.1rem;
+  gap: 0.9rem;
 }
 
 .summary h3 {
-  margin: 0.3rem 0 0;
-  font-size: 0.95rem;
+  margin-top: 0.6rem;
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .summary-result {
-  font-weight: 600;
+  font-size: var(--text-title);
+  font-weight: 300;
+  line-height: 1.2;
 }
 
-.result-win {
-  color: var(--accent);
-}
-
-.result-loss {
-  color: var(--danger);
-}
+.result-win { color: var(--good); }
+.result-loss { color: var(--bad); }
 
 .summary-stats {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 0.25rem 1rem;
-  margin: 0;
-  font-size: 0.92rem;
+  gap: 0.35rem 1rem;
+  font-size: var(--text-small);
 }
 
 .summary-stats dt {
-  color: var(--ink-soft);
+  color: var(--pale-soft);
 }
 
 .summary-stats dd {
-  margin: 0;
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -869,228 +1006,46 @@ p {
 
 .summary-counts,
 .summary-pending {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
 }
 
 .summary-mistakes,
 .summary-advice {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.9rem;
+  gap: 0.6rem;
+  font-size: var(--text-small);
 }
 
 .summary-mistakes li {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.5rem 0.6rem;
-  border-radius: 4px;
-  background: #fdf1e3;
+  gap: 0.2rem;
+  padding: 14px 16px;
+  border-radius: 2px;
+  background: var(--graphite-raised);
 }
 
 .summary-advice li {
-  padding: 0.5rem 0.6rem;
-  border-radius: 4px;
-  background: #eef6f1;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--graphite-line);
 }
 
 .summary-level {
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 14px 16px;
+  border: 1px solid var(--brass);
+  border-radius: 2px;
+  font-size: var(--text-small);
   font-weight: 600;
 }
 
-.move-inaccuracy {
-  color: #9a6a00;
+.summary button {
+  align-self: flex-start;
+  margin-top: 0.4rem;
 }
 
-.move-mistake {
-  color: var(--warning);
-  font-weight: 600;
-}
-
-.move-blunder {
-  color: var(--danger);
-  font-weight: 600;
-}
-
-.coach-warnings {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.coach-warnings li {
-  padding: 0.5rem 0.6rem;
-  border-left: 4px solid var(--warning);
-  border-radius: 4px;
-  background: #fdf1e3;
-  font-size: 0.9rem;
-}
-
-.coach-hint {
-  padding: 0.6rem 0.7rem;
-  border-left: 4px solid var(--accent);
-  border-radius: 4px;
-  background: #eef6f1;
-  font-size: 0.9rem;
-}
-
-.coach-hint p + p {
-  margin-top: 0.3rem;
-}
-
-.coach-hint-title {
-  font-weight: 600;
-}
-
-.reason-dot {
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  margin-right: 0.4rem;
-  border-radius: 3px;
-  vertical-align: baseline;
-}
-
-.dot-control {
-  background: var(--mark-control);
-}
-
-.dot-attack {
-  background: var(--mark-attack);
-}
-
-.dot-danger {
-  background: var(--mark-danger);
-}
-
-.dot-support {
-  background: var(--mark-support);
-}
-
-button.primary {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-button.primary:hover:not(:disabled) {
-  background: #25583f;
-}
-
-.game-setup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.field[hidden] {
-  display: none;
-}
-
-select {
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--panel);
-  color: var(--ink);
-  font: inherit;
-  font-weight: 400;
-}
-
-select:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.setup-description {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-button {
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--panel);
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-}
-
-button:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-
-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.move-list h2 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.move-list-empty {
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-.move-list ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 16rem;
-  overflow-y: auto;
-}
-
-.move-list li {
-  display: grid;
-  grid-template-columns: 2.5rem 1fr 1fr;
-  padding: 0.2rem 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.move-number {
-  color: var(--ink-soft);
-}
-
-/* ---------- Promotion dialog ---------- */
+/* ---------- Promotion pop-up ---------- */
 
 .promotion-overlay {
   position: absolute;
@@ -1099,57 +1054,366 @@ button:disabled {
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgba(31, 36, 48, 0.55);
-  border-radius: 6px;
-}
-
-.promotion-overlay[hidden] {
-  display: none;
+  background: rgba(27, 28, 30, 0.62);
+  border-radius: 3px;
 }
 
 .promotion-box {
-  max-width: 24rem;
-  padding: 1.25rem;
-  border-radius: 10px;
-  background: var(--panel);
+  max-width: 26rem;
+  padding: 28px;
+  border-radius: 2px;
+  background: var(--alu-hi);
+  color: var(--ink);
   text-align: center;
+  box-shadow: 0 26px 46px -22px rgba(27, 28, 30, 0.7);
 }
 
 .promotion-box h2 {
-  font-size: 1.1rem;
+  font-size: var(--text-lead);
+  font-weight: 500;
 }
 
 .promotion-box p {
-  margin-top: 0.4rem;
+  margin-top: 0.5rem;
   color: var(--ink-soft);
-  font-size: 0.9rem;
+  font-size: var(--text-small);
 }
 
 .promotion-choices {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  margin: 1rem 0;
+  gap: 8px;
+  margin: 1.2rem 0 0.6rem;
 }
 
 .promotion-choices button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 0.25rem;
-  font-size: 0.85rem;
-  background: var(--square-light);
+  gap: 0.3rem;
+  padding: 12px 6px;
+  background: var(--oak-pale);
+  border-color: var(--oak-smoke);
 }
 
-.promotion-choices .piece {
-  font-size: 2.5rem;
+.promotion-piece {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.promotion-piece .piece {
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 }
 
-.link-button {
-  border: none;
-  background: none;
+/* ---------- Learn: lesson list ---------- */
+
+.lesson-list {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 48px 40px 64px;
+}
+
+.lesson-list h2 {
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.15;
+}
+
+.lesson-list-intro {
+  margin-top: 0.5rem;
+  max-width: 44em;
   color: var(--ink-soft);
-  text-decoration: underline;
+}
+
+.lesson-section {
+  margin-top: 3rem;
+}
+
+.lesson-section h3 {
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.lesson-section-description {
+  margin-top: 0.15rem;
+  color: var(--ink-soft);
+  font-size: var(--text-small);
+}
+
+/* Lessons are rows in a ruled list, two columns on a wide screen. */
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
+  column-gap: 2.5rem;
+  margin-top: 1rem;
+}
+
+.lesson-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "icon title state"
+    "icon summary state";
+  align-items: center;
+  column-gap: 1rem;
+  width: 100%;
+  padding: 14px 8px;
+  border: none;
+  border-top: 1px solid var(--alu-line);
+  border-radius: 0;
+  font-weight: 400;
+  text-align: left;
+}
+
+.lesson-card:hover:not(:disabled) {
+  background: var(--alu-hi);
+  border-color: var(--alu-line);
+}
+
+.lesson-icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 2px;
+  background: var(--oak-smoke);
+}
+
+.lesson-icon .piece {
+  width: 82%;
+  height: 82%;
+  cursor: pointer;
+}
+
+/* A small four-square board for the lesson about the board itself. */
+.lesson-icon-board {
+  background: conic-gradient(
+    var(--oak-pale) 25%,
+    var(--oak-smoke) 0 50%,
+    var(--oak-pale) 0 75%,
+    var(--oak-smoke) 0
+  );
+}
+
+.lesson-card strong {
+  grid-area: title;
+  align-self: end;
+  font-size: var(--text-body);
+  font-weight: 600;
+}
+
+.lesson-summary {
+  grid-area: summary;
+  align-self: start;
+  color: var(--ink-soft);
+  font-size: var(--text-small);
+}
+
+.lesson-state {
+  grid-area: state;
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lesson-done .lesson-state {
+  color: var(--good-deep);
+}
+
+.lesson-finished {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 24px 28px;
+  border-radius: 2px;
+}
+
+/* ---------- Learn: inside a lesson ---------- */
+
+.lesson-screen {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* One column: the instruction plate, then the board, both the same width. */
+.lesson-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  /* Leaves room for the bar and the plate so the board still fits on screen. */
+  width: min(100%, max(20rem, calc(100vh - var(--bar-height) - 21.5rem)), 640px);
+}
+
+.lesson-bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  /* Tall enough for most steps, so the board does not jump between them. */
+  min-height: 10.5rem;
+  padding: 20px 24px;
+  border-radius: 2px;
+  box-shadow: 0 18px 30px -18px rgba(27, 28, 30, 0.6);
+}
+
+/* A small pointer aims the plate at the board below it. */
+.lesson-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--graphite);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.lesson-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lesson-title {
+  font-size: var(--text-lead);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.lesson-step-count {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.lesson-text {
+  max-width: 38em;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.lesson-feedback {
+  padding: 12px 16px;
+  border: 1px solid var(--good);
+  border-radius: 2px;
+  font-size: 1rem;
+}
+
+.feedback-retry {
+  border-color: var(--poor);
+}
+
+.lesson-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Pushes the buttons to the bottom of the plate. */
+  margin-top: auto;
+}
+
+/* The middle of the button row stretches, sending Next to the right edge. */
+.lesson-buttons .lesson-moves {
+  flex: 1;
+  text-align: center;
+}
+
+.lesson-moves {
+  color: var(--pale-soft);
+  font-size: var(--text-small);
+}
+
+.lesson-complete h2 {
+  font-size: var(--text-title);
+  font-weight: 300;
+}
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 960px) {
+  .app-header {
+    padding: 10px 16px;
+  }
+
+  .app-header h1 {
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
+  }
+
+  .app-nav button {
+    padding: 0 1rem;
+  }
+
+  /* The board and the panel stack, and the page scrolls as a whole. */
+  .play-screen {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+  }
+
+  .plinth {
+    padding: 20px 16px 28px;
+  }
+
+  /* The board takes the full width, so its edges line up with the bar and panel. */
+  .plinth > * {
+    width: 100%;
+  }
+
+  .status-headline {
+    font-size: var(--text-title);
+  }
+
+  .panel-scroll {
+    padding: 0 16px 8px;
+    overflow-y: visible;
+  }
+
+  /* On a phone the verdict and buttons come first, straight under the board. */
+  .panel-foot {
+    order: -1;
+    padding: 18px 16px;
+    border-top: none;
+    border-bottom: 1px solid var(--graphite-line);
+  }
+
+  .lesson-list {
+    padding: 28px 16px 48px;
+  }
+
+  .lesson-list h2 {
+    font-size: var(--text-title);
+  }
+
+  .lesson-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lesson-screen {
+    padding: 16px;
+  }
+
+  .lesson-column {
+    width: min(100%, 640px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scale-marker,
+  button {
+    transition: none;
+  }
 }

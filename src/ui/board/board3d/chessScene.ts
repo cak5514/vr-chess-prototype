@@ -13,20 +13,61 @@ import { createPiece } from "./pieceModels";
 const FILES = "abcdefgh";
 
 const COLOURS = {
-  light: 0xecdcc0,
-  dark: 0xa97b55,
-  frame: 0x6b4a2f,
-  selected: 0xf2d34c,
-  lastMove: 0xf2d34c,
+  // Pale oak and smoked oak in a graphite frame.
+  light: 0xd9c4a1,
+  dark: 0x5a4334,
+  frame: 0x1b1c1e,
+  // Brass marks what is selected or was just played.
+  selected: 0xc79f5a,
+  lastMove: 0xc79f5a,
   check: 0xd1362f,
-  target: 0x1f2430,
-  move: 0x2f6f4f,
+  target: 0x1b1c1e,
+  move: 0xc79f5a,
   // The same colours as the hint marks on the 2D board.
   control: 0x2f7fd1,
   attack: 0xd1362f,
   danger: 0xe08a1a,
   support: 0x8a52c7,
 };
+
+/**
+ * Paints a small picture of wood grain: a base colour with many thin,
+ * slightly wavy streaks of a darker shade. It is drawn in code, so the
+ * project needs no image files, and always comes out the same.
+ */
+function woodGrain(base: string, streak: string): THREE.CanvasTexture {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const context = canvas.getContext("2d")!;
+  context.fillStyle = base;
+  context.fillRect(0, 0, size, size);
+
+  // A tiny repeatable random-number generator, so the grain never changes.
+  let seed = 7;
+  const random = () => {
+    seed = (seed * 16807) % 2147483647;
+    return seed / 2147483647;
+  };
+  context.strokeStyle = streak;
+  // The streaks are broad, so they still show when a square is small on screen.
+  for (let i = 0; i < 48; i++) {
+    const y = random() * size;
+    const wave = 3 + random() * 7;
+    context.globalAlpha = 0.14 + random() * 0.3;
+    context.lineWidth = 2 + random() * 7;
+    context.beginPath();
+    for (let x = 0; x <= size; x += 16) {
+      const offset = Math.sin((x / size) * Math.PI * 2 + i) * wave;
+      if (x === 0) context.moveTo(x, y + offset);
+      else context.lineTo(x, y + offset);
+    }
+    context.stroke();
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
 
 /** Where the middle of a square is on the board. */
 export function squareCentre(square: Square): { x: number; z: number } {
@@ -132,8 +173,8 @@ export class ChessScene {
   private buildBoard(): THREE.Group {
     const board = new THREE.Group();
     const tile = new THREE.BoxGeometry(1, 0.1, 1);
-    const light = new THREE.MeshStandardMaterial({ color: COLOURS.light, roughness: 0.8 });
-    const dark = new THREE.MeshStandardMaterial({ color: COLOURS.dark, roughness: 0.8 });
+    const light = new THREE.MeshStandardMaterial({ map: woodGrain("#d9c4a1", "#b89f78"), roughness: 0.7 });
+    const dark = new THREE.MeshStandardMaterial({ map: woodGrain("#5a4334", "#3d2c22"), roughness: 0.7 });
 
     for (let file = 0; file < 8; file++) {
       for (let rank = 0; rank < 8; rank++) {
@@ -166,7 +207,7 @@ export class ChessScene {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = 64;
     const context = canvas.getContext("2d")!;
-    context.fillStyle = "#ecdcc0";
+    context.fillStyle = "#dadbd6";
     context.font = "bold 44px system-ui, sans-serif";
     context.textAlign = "center";
     context.textBaseline = "middle";
